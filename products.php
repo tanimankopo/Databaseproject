@@ -247,6 +247,20 @@ function confirmDelete(productID, event) {
         </table>
     </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <!-- Add Product Modal -->
     <div class="modal" id="modal">
         <div class="modal-content">
