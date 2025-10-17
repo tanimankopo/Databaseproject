@@ -44,13 +44,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_product'])) {
     $stmt->bind_param("i", $deleteID);
 
     if ($stmt->execute()) {
-        echo "<script>alert('🗑️ Product deleted successfully!'); window.location='products.php';</script>";
+    echo "success";
     } else {
-        echo "<script>alert('❌ Error deleting product.'); window.location='products.php';</script>";
+        echo "error";
     }
-
     $stmt->close();
+    exit();
+    
+
 }
+
 
 // ✅ Fetch products (oldest first)
 $result = $conn->query("SELECT * FROM products ORDER BY dateAdded ASC");
@@ -116,8 +119,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
     <link rel="stylesheet" type="text/css" href="css/products.css">
     
 </head>
-<body>
 
+
+<script>
+function confirmDelete(productID, event) {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+
+    fetch('products.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            delete_product: '1',
+            deleteID: productID
+        })
+    })
+    .then(response => response.text())
+    .then(data => {
+        if (data.trim() === "success") {
+            alert("🗑️ Product deleted successfully!");
+            const row = event.target.closest('tr');
+            row.style.opacity = '0';
+            setTimeout(() => row.remove(), 300);
+        } else {
+            alert("❌ Error deleting product.");
+            console.log("Server response:", data);
+        }
+    })
+    .catch(error => {
+        alert("⚠️ Error connecting to server.");
+        console.error(error);
+    });
+}
+</script>
+
+<body>
+    
     <?php
             include("sidebar.php")
     ?>
@@ -130,9 +166,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
             <div class="settings-menu">
                 <button class="settings-btn">&#9776;</button>
                 <div class="settings-dropdown">
-                    <button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+ Add Product</button>
+                    <button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+ Add Product</button>  
                 </div>
-            </div>
         </header>
             <div style="margin: 15px 0;">
                 <input type="text" id="searchInput" placeholder="🔍 Search by name or category..." 
@@ -177,9 +212,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
                     <th>Category</th>
                     <th>Price</th>
                     <th>QTY</th>
-                    <th>SupplierID</th>
+                    <th>Sup.ID</th>
                     <th>DateAdded</th>
-                     <th>Actions</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -208,6 +243,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
                 </tr>
                 <?php endwhile; ?>
             </tbody>
+
         </table>
     </div>
 
@@ -247,8 +283,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
         </div>
     </div>
 
-  
-<script>
+    
+
+
+
+            
+        <script>
             // Toggle settings dropdown
             document.querySelector(".settings-btn").addEventListener("click", function() {
                 document.querySelector(".settings-menu").classList.toggle("show");
