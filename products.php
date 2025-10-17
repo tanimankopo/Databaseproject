@@ -131,8 +131,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
                 <button class="settings-btn">&#9776;</button>
                 <div class="settings-dropdown">
                     <button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+ Add Product</button>
-                    <button class="delete-btn" onclick="document.getElementById('deleteModal').style.display='flex'">🗑 Delete Product</button>
-                    <button class="update-btn" onclick="document.getElementById('updateModal').style.display='flex'">✏ Update Product</button>>
                 </div>
             </div>
         </header>
@@ -181,6 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
                     <th>QTY</th>
                     <th>SupplierID</th>
                     <th>DateAdded</th>
+                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -200,6 +199,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
                     <td><?= $row['stockQuantity']; ?></td>
                     <td><?= $row['supplierID']; ?></td>
                     <td><?= $row['dateAdded']; ?></td>
+                    <td>
+                        <div class="action">
+                            <button class="update-btn" onclick="document.getElementById('updateModal').style.display='flex'">Update</button>
+                            <button class="delete-btn" onclick="confirmDelete(<?= $row['productID']; ?>, event)"> Delete</button>
+                        </div>
+                    </td>
                 </tr>
                 <?php endwhile; ?>
             </tbody>
@@ -242,59 +247,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
         </div>
     </div>
 
-    <!-- Delete Product Modal -->
-    <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <h3>Delete Product</h3>
-            <form method="POST" action="products.php">
-                <label>Enter Product ID to Delete:</label>
-                <input type="number" name="deleteID" required><br>
-                <button type="submit" name="delete_product">Delete</button>
-                <button type="button" onclick="document.getElementById('deleteModal').style.display='none'">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-            <!-- Update Product Modal -->
-            <div class="modal" id="updateModal">
-                <div class="modal-content">
-                    <h3>Update Product</h3>
-                    <form method="POST" action="products.php" enctype="multipart/form-data">
-                        <label>Product ID (to update):</label>
-                        <input type="number" name="updateID" required><br>
-
-                        <label>New Product Image:</label>
-                        <input type="file" name="updateImg" accept="image/*"><br>
-
-                        <label>New Product Name:</label>
-                        <input type="text" name="updateName"><br>
-
-                        <label>New Category:</label>
-                        <select name="updateCategory">
-                            <option value="">-- Select Category --</option>
-                            <option value="Engine & Transmission">Engine & Transmission</option>
-                            <option value="Braking System">Braking System</option>
-                            <option value="Suspension & Steering">Suspension & Steering</option>
-                            <option value="Electrical & Lighting">Electrical & Lighting</option>
-                            <option value="Tires & Wheels">Tires & Wheels</option>
-                        </select><br>
-
-                        <label>New Price:</label>
-                        <input type="number" step="0.01" name="updatePrice"><br>
-
-                        <label>New Stock Quantity:</label>
-                        <input type="number" name="updateStock"><br>
-
-                        <label>New Supplier ID:</label>
-                        <input type="number" name="updateSupplier"><br>
-
-                        <button type="submit" name="update_product">Update</button>
-                        <button type="button" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
-                    </form>
-                </div>
-            </div>
-
-        <script>
+  
+<script>
             // Toggle settings dropdown
             document.querySelector(".settings-btn").addEventListener("click", function() {
                 document.querySelector(".settings-menu").classList.toggle("show");
@@ -330,6 +284,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
             }
         });
     }   
+
+
+                               
     </script>
 </body>
 </html>

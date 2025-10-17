@@ -285,12 +285,12 @@ body {
 /* Column Widths (balanced for readability) */
 .products-table th:nth-child(1), .products-table td:nth-child(1) { width: 5%; } /* ID */
 .products-table th:nth-child(2), .products-table td:nth-child(2) { width: 10%; } /* Image */
-.products-table th:nth-child(3), .products-table td:nth-child(3) { width: 20%; } /* Name */
-.products-table th:nth-child(4), .products-table td:nth-child(4) { width: 15%; } /* Category */
+.products-table th:nth-child(3), .products-table td:nth-child(3) { width: 15%; } /* Name */
+.products-table th:nth-child(4), .products-table td:nth-child(4) { width: 17%; } /* Category */
 .products-table th:nth-child(5), .products-table td:nth-child(5) { width: 10%; } /* Price */
 .products-table th:nth-child(6), .products-table td:nth-child(6) { width: 8%; } /* QTY */
 .products-table th:nth-child(7), .products-table td:nth-child(7) { width: 8%; } /* Supplier ID */
-.products-table th:nth-child(8), .products-table td:nth-child(8) { width: 24%; } /* Date Added */
+.products-table th:nth-child(8), .products-table td:nth-child(8) { width: 18%; } /* Date Added */
 
 /* Table Images */
 .products-table img {
@@ -305,6 +305,64 @@ body {
 .products-table img:hover {
     transform: scale(1.1);
 }
+
+/* Action Buttons Container */
+.action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* space between buttons */
+}
+
+/* Common Button Style for Action Buttons */
+.action button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+/* Update Button */
+.update-btn {
+    background-color: #007bff; /* Blue */
+}
+
+.update-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+/* Delete Button */
+.delete-btn {
+    background-color: #dc3545; /* Red */
+}
+
+.delete-btn:hover {
+    background-color: #b52a36;
+    transform: scale(1.05);
+}
+
+/* Optional: smaller buttons on narrow screens */
+@media (max-width: 768px) {
+    .action button {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+}
+
+
+/* Update Button */
+.update-btn {
+    background-color: #007bff; /* Blue */
+}
+
+.update-btn:hover {
+    background-color: #0056b3;
+}
+
 
 /* Modals */
 .modal {
