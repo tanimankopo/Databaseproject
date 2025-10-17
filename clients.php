@@ -67,7 +67,7 @@ $result = $conn->query("SELECT * FROM clientinfo ORDER BY clientID ASC");
 <head>
     <meta charset="UTF-8">
     <title>Clients</title>
-    <link rel="stylesheet" href="client.css">
+    <link rel="stylesheet" href="css/client.css">
 </head>
 <body>
 

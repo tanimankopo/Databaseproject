@@ -18,7 +18,7 @@ $lowStockCount = $lowStockResult->num_rows;
 <head>
     <meta charset="UTF-8">
     <title>Homepage</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="css/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>

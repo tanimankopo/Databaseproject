@@ -19,7 +19,7 @@ $productCount = $conn->query("SELECT COUNT(*) as count FROM products")->fetch_as
 <head>
     <meta charset="UTF-8">
     <title>About Inventory System</title>
-    <link rel="stylesheet" href="about.css"> <!-- Link to the new CSS -->
+    <link rel="stylesheet" href="css/about.css"> <!-- Link to the new CSS -->
 </head>
 <body>
     <!-- Sidebar (matches existing design) -->
