@@ -59,7 +59,7 @@ $salesResult = $conn->query("SELECT * FROM sales ORDER BY saleID ASC");
 <head>
     <meta charset="UTF-8">
     <title>Clients</title>
-    <link rel="stylesheet" type="text/css" href="Sales.css">
+    <link rel="stylesheet" type="text/css" href="css/Sales.css">
 </head>
 <body>
 

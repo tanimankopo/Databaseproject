@@ -73,7 +73,7 @@ if (isset($_GET['role'])) {
 <head>
     <meta charset="UTF-8">
     <title>User Management</title>
-    <link rel="stylesheet" type="text/css" href="Usermanagement.css">
+    <link rel="stylesheet" type="text/css" href="css/Usermanagement.css">
     <style>
         .form-section { display: none;  padding: 15px; background: #716d6dff; border-radius: 8px; box-shadow: 0 0 8px rgba(0,0,0,0.1);}
         .form-section.active { display: block; }

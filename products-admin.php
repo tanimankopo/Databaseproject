@@ -113,7 +113,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
 <head>
     <meta charset="UTF-8">
     <title>Products</title>
-    <link rel="stylesheet" type="text/css" href="products.css">
+    <link rel="stylesheet" type="text/css" href="css/products.css">
     
 </head>
 <body>

@@ -87,7 +87,7 @@ $result = $conn->query("SELECT * FROM supplier ORDER BY supplierID ASC");
 <head>
     <meta charset="UTF-8">
     <title>Suppliers</title>
-    <link rel="stylesheet" href="supplier.css">
+    <link rel="stylesheet" href="css/supplier.css">
 </head>
 <body>
 
