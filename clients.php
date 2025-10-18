@@ -139,19 +139,7 @@ $result = $conn->query("SELECT * FROM clientinfo ORDER BY clientID ASC");
         </div>
     </div>
 
-    <!-- Delete Client Modal -->
-    <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <h3>Delete Client</h3>
-            <form method="POST" action="clients.php">
-                <label>Enter Client ID to Delete:</label>
-                <input type="number" name="deleteID" required><br>
-                <button type="submit" name="delete_client">Delete</button>
-                <button type="button" onclick="document.getElementById('deleteModal').style.display='none'">Cancel</button>
-            </form>
-        </div>
-    </div>
-
+   
     <!-- Update Client Modal -->
     <div class="modal" id="updateModal">
         <div class="modal-content">

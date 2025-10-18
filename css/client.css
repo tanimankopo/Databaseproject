@@ -1,4 +1,4 @@
-/* CSS Custom Properties (Variables) - Matches dashboard/product/sales/usermanagement/supplier for theme/interactivity */
+/* CSS Custom Properties (Variables) - Matches dashboard/product/sales/usermanagement for theme/interactivity */
 :root {
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     --sidebar-bg: #2f3542;
@@ -41,7 +41,7 @@ body {
     min-height: 100vh;
 }
 
-/* Sidebar (exact match to dashboard/product/sales/usermanagement/supplier) */
+/* Sidebar (exact match to dashboard/product/sales/usermanagement) */
 .sidebar {
     width: 250px;
     background: var(--sidebar-bg);
@@ -147,7 +147,7 @@ body {
     gap: 0.5rem;
 }
 
-/* Settings Menu/Dropdown (exact match to product/sales/supplier) */
+/* Settings Menu/Dropdown (exact match to product/sales) */
 .settings-menu {
     position: relative;
     display: inline-block;
@@ -210,7 +210,7 @@ body {
     color: white;
 }
 
-/* Specific Button Styles (like product/supplier) */
+/* Specific Button Styles (like product) */
 .add-btn {
     border-bottom: 1px solid var(--border-color);
 }
@@ -235,8 +235,8 @@ body {
     background: var(--warning-orange);
 }
 
-/* Client Table (like products/supplier-table: light gray card, striped, blue hover, auto-fit) */
-.client-table {
+/* Supplier Table (like products-table: light gray card, striped, blue hover, auto-fit) */
+.supplier-table {
     width: 100%;
     border-collapse: collapse;
     background: var(--tile-bg); /* Light gray for readability */
@@ -248,15 +248,15 @@ body {
     border: 1px solid var(--border-color);
 }
 
-.client-table thead {
+.supplier-table thead {
     background: var(--sidebar-bg);
     color: white;
 }
 
-.client-table th,
-.client-table td {
+.supplier-table th,
+.supplier-table td {
     padding: var(--spacing-sm);
-    text-align: center; /* Like products/supplier */
+    text-align: center; /* Like products */
     border-bottom: 1px solid var(--border-color);
     overflow: hidden;
     text-overflow: ellipsis; /* Like products for long text (e.g., address) */
@@ -265,36 +265,37 @@ body {
     color: var(--text-dark); /* Dark text for readability */
 }
 
-.client-table th {
+.supplier-table th {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: 0.85rem;
 }
 
-.client-table tbody tr:nth-child(even) {
+.supplier-table tbody tr:nth-child(even) {
     background: #f0f0f0; /* Subtle stripe like products */
 }
 
-.client-table tbody tr:hover {
+.supplier-table tbody tr:hover {
     background: var(--accent-blue); /* Blue hover like products */
     color: white;
     transition: var(--transition);
 }
 
-.client-table tbody tr:hover td {
+.supplier-table tbody tr:hover td {
     color: white;
 }
 
-/* Column Widths (balanced like products/supplier, but auto-fit primary) */
-.client-table th:nth-child(1), .client-table td:nth-child(1) { width: 8%; } /* ID */
-.client-table th:nth-child(2), .client-table td:nth-child(2) { width: 20%; } /* Name */
-.client-table th:nth-child(3), .client-table td:nth-child(3) { width: 15%; } /* Number */
-.client-table th:nth-child(4), .client-table td:nth-child(4) { width: 25%; } /* Email */
-.client-table th:nth-child(5), .client-table td:nth-child(5) { width: 22%; } /* Address */
-.client-table th:nth-child(6), .client-table td:nth-child(6) { width: 10%; } /* Date */
+/* Column Widths (balanced like products, but auto-fit primary) */
+.supplier-table th:nth-child(1), .supplier-table td:nth-child(1) { width: 5%; } /* ID */
+.supplier-table th:nth-child(2), .supplier-table td:nth-child(2) { width: 15%; } /* Name */
+.supplier-table th:nth-child(3), .supplier-table td:nth-child(3) { width: 15%; } /* Contact Person */
+.supplier-table th:nth-child(4), .supplier-table td:nth-child(4) { width: 12%; } /* Number */
+.supplier-table th:nth-child(5), .supplier-table td:nth-child(5) { width: 18%; } /* Email */
+.supplier-table th:nth-child(6), .supplier-table td:nth-child(6) { width: 20%; } /* Address */
+.supplier-table th:nth-child(7), .supplier-table td:nth-child(7) { width: 15%; } /* Status */
 
-/* Modals (exact match to product/supplier: light gray content, blur backdrop, focus states) */
+/* Modals (exact match to product: light gray content, blur backdrop, focus states) */
 .modal {
     display: none;
     position: fixed;
@@ -413,12 +414,12 @@ body {
     }
 
     /* Table: Auto-fit, no forced scroll (wraps/ellipses) */
-    .client-table {
+    .supplier-table {
         font-size: 0.9rem;
     }
 
-    .client-table th,
-    .client-table td {
+    .supplier-table th,
+    .supplier-table td {
         padding: 0.75rem 0.5rem;
         font-size: 0.85rem;
         white-space: normal; /* Allow wrap on mobile for long fields like address */
@@ -449,8 +450,8 @@ body {
 }
 
 @media (max-width: 480px) {
-    .client-table th,
-    .client-table td {
+    .supplier-table th,
+    .supplier-table td {
         font-size: 0.8rem;
         padding: 0.625rem 0.25rem;
     }
@@ -478,7 +479,7 @@ body {
         background: #2d3748;
     }
 
-    .client-table,
+    .supplier-table,
     .modal-content,
     .settings-dropdown {
         background: var(--tile-bg);
@@ -486,21 +487,21 @@ body {
         border-color: var(--border-color);
     }
 
-    .client-table thead {
+    .supplier-table thead {
         background: var(--sidebar-bg);
     }
 
-    .client-table tbody tr:nth-child(even) {
+    .supplier-table tbody tr:nth-child(even) {
         background: #4a5568; /* Subtle dark stripe */
     }
 
-    .client-table th,
-    .client-table td {
+    .supplier-table th,
+    .supplier-table td {
         border-bottom-color: var(--border-color);
         color: var(--text-dark);
     }
 
-    .client-table tbody tr:hover {
+    .supplier-table tbody tr:hover {
         background: var(--accent-blue);
         color: white;
     }
