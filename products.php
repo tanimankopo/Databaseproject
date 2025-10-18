@@ -120,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
     
 </head>
 
-
+<!--DELETE TO   --->
 <script>
 function confirmDelete(productID, event) {
     if (!confirm("Are you sure you want to delete this product?")) return;
@@ -183,24 +183,26 @@ function confirmDelete(productID, event) {
                     <option value="Tires & Wheels">Tires & Wheels</option>
                 </select>
             </div>
-            <script>
-    // ✅ Filter products by Name or Category
-    document.getElementById("searchInput").addEventListener("keyup", function() {
-        let filter = this.value.toLowerCase();
-        let rows = document.querySelectorAll(".products-table tbody tr");
 
-        rows.forEach(row => {
-            let name = row.cells[2].textContent.toLowerCase();     // Product Name
-            let category = row.cells[3].textContent.toLowerCase(); // Category
 
-            if (name.includes(filter) || category.includes(filter)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
-                    }
-                });
-            });
-            </script>
+                    <script>
+            // ✅ Filter products by Name or Category
+            document.getElementById("searchInput").addEventListener("keyup", function() {
+                let filter = this.value.toLowerCase();
+                let rows = document.querySelectorAll(".products-table tbody tr");
+
+                rows.forEach(row => {
+                    let name = row.cells[2].textContent.toLowerCase();     // Product Name
+                    let category = row.cells[3].textContent.toLowerCase(); // Category
+
+                    if (name.includes(filter) || category.includes(filter)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                            }
+                        });
+                    });
+                    </script>
 
         <!-- Products Table -->
         <table class="products-table">
@@ -236,7 +238,17 @@ function confirmDelete(productID, event) {
                     <td><?= $row['dateAdded']; ?></td>
                     <td>
                         <div class="action">
-                            <button class="update-btn" onclick="document.getElementById('updateModal').style.display='flex'">Update</button>
+                            
+                        <button class="update-btn"
+                            onclick="openUpdateModal(
+                                '<?= $row['productID']; ?>',
+                                '<?= htmlspecialchars($row['productName']); ?>',
+                                '<?= htmlspecialchars($row['category']); ?>',
+                                '<?= $row['price']; ?>',
+                                '<?= $row['stockQuantity']; ?>',
+                                '<?= $row['supplierID']; ?>'
+                                )"> Update
+                            </button>
                             <button class="delete-btn" onclick="confirmDelete(<?= $row['productID']; ?>, event)"> Delete</button>
                         </div>
                     </td>
@@ -246,18 +258,6 @@ function confirmDelete(productID, event) {
 
         </table>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -298,6 +298,46 @@ function confirmDelete(productID, event) {
     </div>
 
     
+    <!-- UPDATE PRODUCT MODAL -->
+    <div class="modal" id="updateModal">
+    <div class="modal-content">
+        <h3>Update Product</h3>
+
+        <form method="POST" action="products.php" enctype="multipart/form-data">
+        <input type="hidden" name="updateID" id="updateID">
+
+        <label>Product Image:</label>
+        <input type="file" name="updateImg" accept="image/*"><br>
+
+        <label>Product Name:</label>
+        <input type="text" name="updateName" id="updateName" required><br>
+
+        <label>Category:</label>
+        <select name="updateCategory" id="updateCategory" required>
+            <option value="">-- Select Category --</option>
+            <option value="Engine & Transmission">Engine & Transmission</option>
+            <option value="Braking System">Braking System</option>
+            <option value="Suspension & Steering">Suspension & Steering</option>
+            <option value="Electrical & Lighting">Electrical & Lighting</option>
+            <option value="Tires & Wheels">Tires & Wheels</option>
+        </select><br>
+
+        <label>Price:</label>
+        <input type="number" step="0.01" name="updatePrice" id="updatePrice" required><br>
+
+        <label>Stock Quantity:</label>
+        <input type="number" name="updateStock" id="updateStock" required><br>
+
+        <label>Supplier ID:</label>
+        <input type="number" name="updateSupplier" id="updateSupplier"><br>
+
+        <div style="margin-top:10px;">
+            <button type="submit" name="update_product">Update</button>
+            <button type="button" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
+        </div>
+        </form>
+    </div>
+    </div>
 
 
 
@@ -338,8 +378,17 @@ function confirmDelete(productID, event) {
             }
         });
     }   
-
-
+            
+    //SA IUPDATE TO
+    function openUpdateModal(productID, name, category, price, qty, supplier) {
+        document.getElementById('updateModal').style.display = 'flex';
+        document.getElementById('updateID').value = productID;
+        document.getElementById('updateName').value = name;
+        document.getElementById('updateCategory').value = category;
+        document.getElementById('updatePrice').value = price;
+        document.getElementById('updateStock').value = qty;
+        document.getElementById('updateSupplier').value = supplier;
+    }
                                
     </script>
 </body>
