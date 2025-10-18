@@ -9,7 +9,7 @@
     
       <!-- Sidebar -->
     <aside class="sidebar">
-        <h2 class="logo">Inventory</h2>
+        <h2 class="logo">1-GARAGE</h2>
         <ul class="nav-links">
             <li><a href="dashboard.php" <?php if(basename($_SERVER['PHP_SELF']) == 'dashboard.php') echo 'class="active"'; ?>>🏠 Dashboard</a></li>
             <li><a href="products.php"<?php if(basename($_SERVER['PHP_SELF']) == 'products.php') echo 'class="active"'; ?>>📦 Products</a></li>

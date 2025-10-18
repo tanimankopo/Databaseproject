@@ -44,11 +44,7 @@ $lowStockCount = $lowStockResult->num_rows;
                 <h3>50</h3>
                 <p>Top Products</p>
             </div>
-            <div class="tile">
-                <h3>50</h3>
-                <p>Incoming shipment</p>
-            </div>
-
+          
             <!-- Low Stock Tile -->
             <div class="tile <?php echo ($lowStockCount > 0) ? 'low-stock' : ''; ?>">
                 <h3><?php echo $lowStockCount; ?></h3>
