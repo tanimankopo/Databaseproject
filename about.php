@@ -23,6 +23,8 @@ $productCount = $conn->query("SELECT COUNT(*) as count FROM products")->fetch_as
 </head>
 <body>
     <!-- Sidebar (matches existing design) -->
+      <!-- Sidebar (matches existing design) -->
+        <!-- Sidebar (matches existing design) -->
     
     <?php
         include ('sidebar-admin.php');
