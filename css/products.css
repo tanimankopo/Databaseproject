@@ -282,15 +282,33 @@ body {
     color: white;
 }
 
-/* Column Widths (balanced for readability) */
-.products-table th:nth-child(1), .products-table td:nth-child(1) { width: 5%; } /* ID */
-.products-table th:nth-child(2), .products-table td:nth-child(2) { width: 10%; } /* Image */
-.products-table th:nth-child(3), .products-table td:nth-child(3) { width: 15%; } /* Name */
-.products-table th:nth-child(4), .products-table td:nth-child(4) { width: 17%; } /* Category */
-.products-table th:nth-child(5), .products-table td:nth-child(5) { width: 10%; } /* Price */
-.products-table th:nth-child(6), .products-table td:nth-child(6) { width: 8%; } /* QTY */
-.products-table th:nth-child(7), .products-table td:nth-child(7) { width: 8%; } /* Supplier ID */
-.products-table th:nth-child(8), .products-table td:nth-child(8) { width: 18%; } /* Date Added */
+/* Balanced Column Widths for Better Spacing */
+.products-table th:nth-child(1),
+.products-table td:nth-child(1) { width: 6%; }  /* ID */
+
+.products-table th:nth-child(2),
+.products-table td:nth-child(2) { width: 10%; } /* Image */
+
+.products-table th:nth-child(3),
+.products-table td:nth-child(3) { width: 16%; } /* Product Name */
+
+.products-table th:nth-child(4),
+.products-table td:nth-child(4) { width: 14%; } /* Category */
+
+.products-table th:nth-child(5),
+.products-table td:nth-child(5) { width: 10%; } /* Price */
+
+.products-table th:nth-child(6),
+.products-table td:nth-child(6) { width: 8%; }  /* Quantity */
+
+.products-table th:nth-child(7),
+.products-table td:nth-child(7) { width: 10%; } /* Supplier ID */
+
+.products-table th:nth-child(8),
+.products-table td:nth-child(8) { width: 14%; } /* Date Added */
+
+.products-table th:nth-child(9),
+.products-table td:nth-child(9) { width: 12%; } /* Actions */
 
 /* Table Images */
 .products-table img {
