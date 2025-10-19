@@ -103,8 +103,7 @@ $result = $conn->query("SELECT * FROM supplier ORDER BY supplierID ASC");
                 <button class="settings-btn">&#9776;</button>
                 <div class="settings-dropdown">
                     <button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+ Add Supplier</button>
-                    <button class="delete-btn" onclick="document.getElementById('deleteModal').style.display='flex'">🗑 Delete Supplier</button>
-                    <button class="update-btn" onclick="document.getElementById('updateModal').style.display='flex'">✏ Update Supplier</button>
+
                 </div>
             </div>
         </header>
