@@ -119,6 +119,7 @@ $result = $conn->query("SELECT * FROM supplier ORDER BY supplierID ASC");
                     <th>Email</th>
                     <th>Address</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -131,12 +132,28 @@ $result = $conn->query("SELECT * FROM supplier ORDER BY supplierID ASC");
                     <td><?= htmlspecialchars($row['email']); ?></td>
                     <td><?= htmlspecialchars($row['address']); ?></td>
                     <td><?= $row['status']; ?></td>
+                    <td> 
+                        <div class="action">
+                            <button class="update-btn"
+                            onclick="openUpdateModal(
+                                '<?= $row['supplierID']; ?>',
+                                '<?= htmlspecialchars($row['supplierName']); ?>',
+                                '<?= htmlspecialchars($row['contactPerson']); ?>',
+                                '<?= $row['contactNumber']; ?>',
+                                '<?= htmlspecialchars($row['email']); ?>',
+                                '<?= htmlspecialchars($row['address']); ?>',
+                                 '<?= htmlspecialchars($row['status']); ?>',
+                                )"> Update
+                            </button>
+                            <button class="delete-btn" onclick="confirmDelete(<?= $row['supplierID']; ?>, event)"> Delete</button>
+                        </div>
+                </td>    
                 </tr>
                 <?php endwhile; ?>
             </tbody>
         </table>
     </div>
-
+<!-- Add Supplier Modal --><!-- Add Supplier Modal --><!-- Add Supplier Modal -->
     <!-- Add Supplier Modal -->
     <div class="modal" id="modal">
         <div class="modal-content">
