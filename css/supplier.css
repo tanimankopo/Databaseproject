@@ -209,31 +209,56 @@ body {
     background: var(--accent-blue);
     color: white;
 }
-
-/* Specific Button Styles (like product) */
-.add-btn {
-    border-bottom: 1px solid var(--border-color);
+/* 🔹 Action Buttons Container */
+.action {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* space between buttons */
 }
 
-.add-btn:hover {
-    background: var(--success-green);
+/* 🔹 Common Style for Action Buttons */
+.action button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: var(--transition);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
-.delete-btn {
-    border-bottom: 1px solid var(--border-color);
-}
-
-.delete-btn:hover {
-    background: var(--alert-red);
-}
-
+/* 🔵 Update Button */
 .update-btn {
-    border-bottom: none;
+    background: var(--accent-blue); /* Blue theme color */
 }
 
 .update-btn:hover {
-    background: var(--warning-orange);
+    background: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 5px 12px rgba(0, 91, 187, 0.3);
 }
+
+/* 🔴 Delete Button */
+.delete-btn {
+    background: var(--alert-red); /* Red alert color */
+}
+
+.delete-btn:hover {
+    background: #b52a36;
+    transform: scale(1.05);
+    box-shadow: 0 5px 12px rgba(181, 42, 54, 0.3);
+}
+
+/* 📱 Responsive: smaller buttons on narrow screens */
+@media (max-width: 768px) {
+    .action button {
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+}
+
 
 /* Supplier Table (like products-table: light gray card, striped, blue hover, auto-fit) */
 .supplier-table {

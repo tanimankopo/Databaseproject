@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
         $targetDir = "uploads/";
         if (!is_dir($targetDir)) mkdir($targetDir, 0777, true);
         $productsImg = $targetDir . basename($_FILES["updateImg"]["name"]);
-        move_uploaded_file($_FILES["updateImg"]["tmp_name"], $productsImg);
+        move_uploaded_file($_FILES["updat4eImg"]["tmp_name"], $productsImg);
     }
 
     if (!empty($productsImg)) {
