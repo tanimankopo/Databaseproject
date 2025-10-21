@@ -36,7 +36,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_client_sale'])) {
     header("Location: sales.php");
     exit();
 }
-
+// ✅ Update Sale
+// ✅ Update Sale
+// ✅ Update Sale
+// ✅ Update Sale
+// ✅ Update Sale
 // ✅ Update Sale
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_sale'])) {
     $saleID = intval($_POST['saleID']);
