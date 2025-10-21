@@ -9,12 +9,7 @@ if (!isset($_SESSION['username'])) {
 
 require 'db.php'; // Include your database connection
 // Fetch some dynamic stats for the about page (e.g., user count, product count)
-// Fetch some dynamic stats for the about page (e.g., user count, product count)
-// Fetch some dynamic stats for the about page (e.g., user count, product count)
-// Fetch some dynamic stats for the about page (e.g., user count, product count)
-// Fetch some dynamic stats for the about page (e.g., user count, product count)
-// Fetch some dynamic stats for the about page (e.g., user count, product count)
-// Fetch some dynamic stats for the about page (e.g., user count, product count)
+
 $userCount = $conn->query("SELECT COUNT(*) as count FROM usermanagement")->fetch_assoc()['count'];
 $productCount = $conn->query("SELECT COUNT(*) as count FROM products")->fetch_assoc()['count'];
 ?>
