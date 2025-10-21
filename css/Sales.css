@@ -316,22 +316,17 @@ body {
     color: white;
 }
 
-/* Column Widths (balanced for sales data) */
-.sales-table th:nth-child(1), .sales-table td:nth-child(1) { width: 8%; } /* Sale ID */
+ /* Column Widths (balanced for sales data + actions) */
+.sales-table th:nth-child(1), .sales-table td:nth-child(1) { width: 8%; }  /* Sale ID */
 .sales-table th:nth-child(2), .sales-table td:nth-child(2) { width: 10%; } /* Client ID */
 .sales-table th:nth-child(3), .sales-table td:nth-child(3) { width: 10%; } /* Product ID */
-.sales-table th:nth-child(4), .sales-table td:nth-child(4) { width: 8%; } /* User ID */
-.sales-table th:nth-child(5), .sales-table td:nth-child(5) { width: 8%; } /* Quantity */
+.sales-table th:nth-child(4), .sales-table td:nth-child(4) { width: 8%; }  /* User ID */
+.sales-table th:nth-child(  5), .sales-table td:nth-child(5) { width: 8%; }  /* Quantity */
 .sales-table th:nth-child(6), .sales-table td:nth-child(6) { width: 12%; } /* Unit Price */
 .sales-table th:nth-child(7), .sales-table td:nth-child(7) { width: 12%; } /* Total Amount */
-.sales-table th:nth-child(8), .sales-table td:nth-child(8) { width: 32%; } /* Sale Date */
+.sales-table th:nth-child(8), .sales-table td:nth-child(8) { width: 12%; } /* Sale Date */
+.sales-table th:nth-child(9), .sales-table td:nth-child(9) { width: 20%; } /* Actions */
 
-/* Currency Formatting (visual via CSS; add PHP for ₱ if needed) */
-.sales-table td:nth-child(6),
-.sales-table td:nth-child(7) {
-    font-family: monospace; /* Monospace for numbers */
-    font-weight: 500;
-}
 
 /* Modals */
 .modal {
