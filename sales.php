@@ -9,7 +9,7 @@ if (!isset($_SESSION['username'])) {
 
 require 'db.php';
 
-// ✅ Insert Client + Sale
+// ✅ Add Client + Sale
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_client_sale'])) {
     $clientName    = $_POST['clientName'];
     $contactNumber = $_POST['contactNumber'];
@@ -36,11 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_client_sale'])) {
     header("Location: sales.php");
     exit();
 }
-// ✅ Update Sale
-// ✅ Update Sale
-// ✅ Update Sale
-// ✅ Update Sale
-// ✅ Update Sale
+
 // ✅ Update Sale
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_sale'])) {
     $saleID = intval($_POST['saleID']);
@@ -81,7 +77,7 @@ $salesResult = $conn->query("SELECT * FROM sales ORDER BY saleID ASC");
 <head>
     <meta charset="UTF-8">
     <title>Sales Management</title>
-    <link rel="stylesheet" type="text/css" href="css/Sales.css">
+    <link rel="stylesheet" href="css/Sales.css">
 </head>
 <body>
 
@@ -100,34 +96,48 @@ $salesResult = $conn->query("SELECT * FROM sales ORDER BY saleID ASC");
 
     <!-- ✅ Sales Table -->
     <table class="sales-table">
-        <tr>
-            <th>Sale ID</th>
-            <th>Client ID</th>
-            <th>Product ID</th>
-            <th>User ID</th>
-            <th>Quantity</th>
-            <th>Unit Price</th>
-            <th>Total Amount</th>
-            <th>Sale Date</th>
-            <th>Action</th>
-        </tr>
+        <thead>
+            <tr>
+                <th>Sale ID</th>
+                <th>Client ID</th>
+                <th>Product ID</th>
+                <th>User ID</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Total Amount</th>
+                <th>Sale Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
         <?php while($row = $salesResult->fetch_assoc()): ?>
-        <tr>
-            <td><?= $row['saleID'] ?></td>
-            <td><?= $row['clientID'] ?></td>
-            <td><?= $row['productID'] ?></td>
-            <td><?= $row['userID'] ?></td>
-            <td><?= $row['quantity'] ?></td>
-            <td><?= $row['unitPrice'] ?></td>
-            <td><?= $row['totalAmount'] ?></td>
-            <td><?= $row['saleDate'] ?></td>
-            <td class="action">
-                <button class="update-btn" 
-                    onclick="openUpdateModal(<?= $row['saleID'] ?>, <?= $row['clientID'] ?>, <?= $row['productID'] ?>, <?= $row['userID'] ?>, <?= $row['quantity'] ?>, <?= $row['unitPrice'] ?>)">Update</button>
-                <button class="delete-btn" onclick="openDeleteModal(<?= $row['saleID'] ?>)">Delete</button>
-            </td>
-        </tr>
+            <tr>
+                <td><?= $row['saleID'] ?></td>
+                <td><?= $row['clientID'] ?></td>
+                <td><?= $row['productID'] ?></td>
+                <td><?= $row['userID'] ?></td>
+                <td><?= $row['quantity'] ?></td>
+                <td><?= $row['unitPrice'] ?></td>
+                <td><?= $row['totalAmount'] ?></td>
+                <td><?= $row['saleDate'] ?></td>
+                <td>
+                    <div class="action">
+                        <button class="update-btn"
+                            onclick="openUpdateModal(
+                                '<?= $row['saleID'] ?>',
+                                '<?= $row['clientID'] ?>',
+                                '<?= $row['productID'] ?>',
+                                '<?= $row['userID'] ?>',
+                                '<?= $row['quantity'] ?>',
+                                '<?= $row['unitPrice'] ?>'
+                            )">Update</button>
+
+                        <button class="delete-btn" onclick="openDeleteModal(<?= $row['saleID'] ?>)">Delete</button>
+                    </div>
+                </td>
+            </tr>
         <?php endwhile; ?>
+        </tbody>
     </table>
 </div>
 
@@ -136,7 +146,6 @@ $salesResult = $conn->query("SELECT * FROM sales ORDER BY saleID ASC");
     <div class="modal-content">
         <h3>Add New Client & Sale</h3>
         <form method="POST" action="sales.php">
-            <h4>👥 Client Information</h4>
             <label>Client Name:</label>
             <input type="text" name="clientName" required><br>
             <label>Contact Number:</label>
@@ -146,15 +155,14 @@ $salesResult = $conn->query("SELECT * FROM sales ORDER BY saleID ASC");
             <label>Address:</label>
             <input type="text" name="address"><br><br>
 
-            <h4>💰 Sales Information</h4>
             <label>Product ID:</label>
             <input type="number" name="productID" required><br>
             <label>User ID:</label>
             <input type="number" name="userID" required><br>
             <label>Quantity:</label>
-            <input type="number" name="quantity" id="quantity" required><br>
+            <input type="number" name="quantity" id="quantity"><br>
             <label>Unit Price:</label>
-            <input type="number" step="0.01" name="unitPrice" id="unitPrice" required><br>
+            <input type="number" step="0.01" name="unitPrice" id="unitPrice"><br>
             <label>Total Amount:</label>
             <input type="text" name="totalAmount" id="totalAmount" readonly><br>
 
@@ -170,19 +178,26 @@ $salesResult = $conn->query("SELECT * FROM sales ORDER BY saleID ASC");
         <h3>Update Sale</h3>
         <form method="POST" action="sales.php">
             <input type="hidden" name="saleID" id="updateSaleID">
+
             <label>Client ID:</label>
             <input type="number" name="clientID" id="updateClientID" required><br>
+
             <label>Product ID:</label>
             <input type="number" name="productID" id="updateProductID" required><br>
+
             <label>User ID:</label>
             <input type="number" name="userID" id="updateUserID" required><br>
+
             <label>Quantity:</label>
             <input type="number" name="quantity" id="updateQuantity" required><br>
+
             <label>Unit Price:</label>
             <input type="number" step="0.01" name="unitPrice" id="updateUnitPrice" required><br>
 
-            <button type="submit" name="update_sale">Update</button>
-            <button type="button" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
+            <div style="margin-top:10px;">
+                <button type="submit" name="update_sale">Update</button>
+                <button type="button" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
+            </div>
         </form>
     </div>
 </div>
@@ -210,7 +225,7 @@ function calcTotal() {
     document.getElementById("totalAmount").value = (qty * price).toFixed(2);
 }
 
-// ✅ Open Update Modal with existing data
+// ✅ Open Update Modal with Data
 function openUpdateModal(saleID, clientID, productID, userID, quantity, unitPrice) {
     document.getElementById("updateSaleID").value = saleID;
     document.getElementById("updateClientID").value = clientID;
@@ -227,7 +242,7 @@ function openDeleteModal(saleID) {
     document.getElementById("deleteModal").style.display = "flex";
 }
 
-// ✅ Toggle settings menu
+// ✅ Toggle Settings Menu
 document.querySelector(".settings-btn").addEventListener("click", function() {
     document.querySelector(".settings-menu").classList.toggle("show");
 });
