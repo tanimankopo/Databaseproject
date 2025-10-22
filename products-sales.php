@@ -155,7 +155,7 @@ function confirmDelete(productID, event) {
 <body>
     
     <?php
-            include("sidebar.php")
+            include("sidebar-sales.php")
     ?>
 
     <!-- Main Content -->

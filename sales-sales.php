@@ -81,7 +81,7 @@ $salesResult = $conn->query("SELECT * FROM sales ORDER BY saleID ASC");
 </head>
 <body>
 
-<?php include("sidebar.php"); ?>
+<?php include("sidebar-sales.php") ?>
 
 <div class="main-content">
     <header class="topbar">

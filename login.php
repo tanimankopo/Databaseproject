@@ -33,9 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login'])) {
             // ✅ Redirect based on role
             if ($db_role === "Admin") {
                 header("Location: dashboard-admin.php");
-            } elseif ($db_role === "sales" || $db_role === "Accountant") {
-                header("Location: dashboard.php");
-            } else {
+            } 
+            elseif ($db_role === "sales" ) {
+                header("Location: dashboard-sales.php");  
+            }
+              elseif ($db_role === "Cashier")
+                header("location: dashboard-cashier.php");
+             else {
                 $error = "Unknown role assigned.";
             }
             exit();

@@ -128,7 +128,7 @@ function confirmDelete(supplierID, event) {
 </script>
 
 <body>
-<?php include("sidebar.php") ?>
+<?php include("sidebar-sales.php") ?>
 
 <!-- ✅ Main Content -->
 <div class="main-content">
