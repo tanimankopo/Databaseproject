@@ -2,7 +2,7 @@
 session_start();
 
 // ✅ Protect page
-if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "sales" && $_SESSION['role'] !== "Accountant")) {
+if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "sales")) {
     header("Location: login.php");
     exit();
 }
@@ -24,7 +24,7 @@ $lowStockCount = $lowStockResult->num_rows;
 <body>
 
     <?php
-            include("sidebar.php")
+            include("sidebar-sales.php")
     ?>
 
     <!-- Main Content -->
