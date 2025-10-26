@@ -1,4 +1,6 @@
 <?php
+ob_start(); // Capture all output to prevent mixing with JSON
+
 session_start();
 
 // ✅ Protect page
@@ -7,82 +9,195 @@ if (!isset($_SESSION['username']) || ($_SESSION['role'] !== "Cashier")) {
     exit();
 }
 
-include "db.php";
-include "sidebar-cashier.php";
+// ✅ Check if this is an AJAX request (primary: header; fallback: POST params)
+$isAjax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') ||
+          isset($_POST['add_to_cart']) || isset($_POST['remove_cart']) || isset($_POST['update_qty']) || isset($_POST['submit_sale']);
 
 // Initialize cart session if not exists
 if(!isset($_SESSION['cart'])){
     $_SESSION['cart'] = [];
 }
 
-// Handle Add to Cart
-if(isset($_POST['add_to_cart'])){
-    $productID = intval($_POST['productID']);
-    $quantity = intval($_POST['quantity']);
+// ✅ Handle AJAX requests FIRST (no HTML/sidebar output)
+if ($isAjax) {
+    include "db.php"; // Include DB only for AJAX (after output buffering)
 
-    $stmt = $conn->prepare("SELECT * FROM products WHERE productID = ?");
-    $stmt->bind_param("i", $productID);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Handle Add to Cart
+    if(isset($_POST['add_to_cart'])){
+        $productID = intval($_POST['productID']);
+        $quantity = intval($_POST['quantity']);
 
-    if($product = $result->fetch_assoc()){
-        $stockLeft = $product['stockQuantity'];
+        $stmt = $conn->prepare("SELECT * FROM products WHERE productID = ?");
+        $stmt->bind_param("i", $productID);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        $found = false;
-        foreach($_SESSION['cart'] as &$item){
-            if($item['productID'] == $productID){
-                $item['quantity'] = min($item['quantity'] + $quantity, $stockLeft);
-                $found = true;
+        if($product = $result->fetch_assoc()){
+            $stockLeft = $product['stockQuantity'];
+
+            $found = false;
+            foreach($_SESSION['cart'] as &$item){
+                if($item['productID'] == $productID){
+                    $item['quantity'] = min($item['quantity'] + $quantity, $stockLeft);
+                    $found = true;
+                    break;
+                }
+            }
+            unset($item);
+
+            if(!$found){
+                $_SESSION['cart'][] = [
+                    'productID' => $productID,
+                    'productName' => $product['productName'],
+                    'price' => $product['price'],
+                    'quantity' => min($quantity, $stockLeft),
+                    'stockLeft' => $stockLeft
+                ];
+            }
+        }
+
+        ob_end_clean(); // Discard buffer
+        header('Content-Type: application/json');
+        echo json_encode(['status'=>'added']);
+        exit();
+    }
+
+    // Handle Remove from Cart
+    if(isset($_POST['remove_cart'])){
+        $removeID = intval($_POST['removeID']);
+        foreach($_SESSION['cart'] as $key => $item){
+            if($item['productID'] == $removeID){
+                unset($_SESSION['cart'][$key]);
                 break;
             }
         }
-        unset($item);
+        $_SESSION['cart'] = array_values($_SESSION['cart']);
+        ob_end_clean();
+        header('Content-Type: application/json');
+        echo json_encode(['status'=>'removed']);
+        exit();
+    }
 
-        if(!$found){
-            $_SESSION['cart'][] = [
-                'productID' => $productID,
-                'productName' => $product['productName'],
-                'price' => $product['price'],
-                'quantity' => min($quantity, $stockLeft),
-                'stockLeft' => $stockLeft
-            ];
+    // Handle Update Quantity
+    if(isset($_POST['update_qty'])){
+        $updateID = intval($_POST['updateID']);
+        $newQty = intval($_POST['newQty']);
+        foreach($_SESSION['cart'] as &$item){
+            if($item['productID'] == $updateID){
+                $item['quantity'] = min($newQty, $item['stockLeft']);
+                break;
+            }
+        }
+        ob_end_clean();
+        header('Content-Type: application/json');
+        echo json_encode(['status'=>'updated']);
+        exit();
+    }
+
+    // Handle Submit Sale → Pending Approval
+    if(isset($_POST['submit_sale'])){
+        $customerName = $_POST['customerName'];
+        $paymentType = $_POST['paymentType'];
+        $totalAmount = $_POST['totalAmount'];
+        $cashier = $_POST['cashier'];
+        $salesAccount = $_POST['salesAccount'];
+
+        if(count($_SESSION['cart'])>0){
+            // Lookup userID for cashier
+            $userID = 0;
+            $stmt = $conn->prepare("SELECT userID FROM usermanagement WHERE username = ?");
+            $stmt->bind_param("s", $cashier);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if($row = $result->fetch_assoc()){
+                $userID = $row['userID'];
+            }
+            $stmt->close();
+
+            // Insert sale master record (adjusted to match full sales table schema)
+            $stmt = $conn->prepare("INSERT INTO sales (clientID, productID, userID, quantity, unitPrice, totalAmount, saleDate, status) VALUES (?, ?, ?, ?, ?, ?, NOW(), ?)");
+            $status = 'pending';
+            $clientID = 0; // Placeholder for customerName
+            $productID = 0; // Placeholder for master record
+            $quantity = 0; // Placeholder
+            $unitPrice = 0; // Placeholder
+            $stmt->bind_param("iiiidds", $clientID, $productID, $userID, $quantity, $unitPrice, $totalAmount, $status);
+            if(!$stmt->execute()){
+                ob_end_clean();
+                header('Content-Type: application/json');
+                echo json_encode(['status'=>'error', 'message'=>'Failed to insert sale: ' . $stmt->error]);
+                exit();
+            }
+            $saleID = $stmt->insert_id;
+            $stmt->close();
+
+            // Insert sale items
+            $stmt = $conn->prepare("INSERT INTO sale_items (saleID, productID, productName, price, quantity) VALUES (?,?,?,?,?)");
+            foreach($_SESSION['cart'] as $item){
+                $stmt->bind_param("iisdi", $saleID, $item['productID'], $item['productName'], $item['price'], $item['quantity']);
+                $stmt->execute();
+            }
+            $stmt->close();
+
+            // Clear cart
+            $_SESSION['cart'] = [];
+            ob_end_clean();
+            header('Content-Type: application/json');
+            echo json_encode(['status'=>'submitted', 'saleID'=>$saleID]);
+            exit();
+        } else {
+            ob_end_clean();
+            header('Content-Type: application/json');
+            echo json_encode(['status'=>'empty']);
+            exit();
         }
     }
 
-    // Return JSON for AJAX
-    echo json_encode(['status'=>'added']);
+    // Fallback for unmatched AJAX
+    ob_end_clean();
+    header('Content-Type: application/json');
+    echo json_encode(['status'=>'error', 'message'=>'Invalid AJAX request']);
     exit();
 }
 
-// Handle Remove from Cart
-if(isset($_POST['remove_cart'])){
-    $removeID = intval($_POST['removeID']);
-    foreach($_SESSION['cart'] as $key => $item){
-        if($item['productID'] == $removeID){
-            unset($_SESSION['cart'][$key]);
-            break;
-        }
-    }
-    $_SESSION['cart'] = array_values($_SESSION['cart']);
-    echo json_encode(['status'=>'removed']);
-    exit();
+// ✅ Non-AJAX requests: Include DB and sidebar, then render HTML page
+include "db.php";
+include "sidebar-cashier.php";
+
+// ✅ Categories and Pagination
+$categories = ["All Items", "Engine & Transmission", "Braking System", "Suspension & Steering", "Electrical & Lighting", "Tires & Wheels"];
+$selectedCategory = isset($_GET['category']) ? $_GET['category'] : 'All Items';
+$limit = 8;
+$page = isset($_GET['page']) ? max(1,intval($_GET['page'])) : 1;
+$offset = ($page-1)*$limit;
+
+// Count total products
+if($selectedCategory != 'All Items'){
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM products WHERE category=?");
+    $stmt->bind_param("s", $selectedCategory);
+    $stmt->execute();
+    $stmt->bind_result($totalProducts);
+    $stmt->fetch();
+    $stmt->close();
+
+    $stmt = $conn->prepare("SELECT * FROM products WHERE category=? ORDER BY productName ASC LIMIT ?, ?");
+    $stmt->bind_param("sii", $selectedCategory, $offset, $limit);
+    $stmt->execute();
+    $items = $stmt->get_result();
+} else {
+    $totalProducts = $conn->query("SELECT COUNT(*) FROM products")->fetch_row()[0];
+
+    $stmt = $conn->prepare("SELECT * FROM products ORDER BY productName ASC LIMIT ?, ?");
+    $stmt->bind_param("ii", $offset, $limit);
+    $stmt->execute();
+    $items = $stmt->get_result();
 }
 
-// Handle Update Quantity
-if(isset($_POST['update_qty'])){
-    $updateID = intval($_POST['updateID']);
-    $newQty = intval($_POST['newQty']);
-    foreach($_SESSION['cart'] as &$item){
-        if($item['productID'] == $updateID){
-            $item['quantity'] = min($newQty, $item['stockLeft']);
-            break;
-        }
-    }
-    echo json_encode(['status'=>'updated']);
-    exit();
-}
+$totalPages = ceil($totalProducts / $limit);
+
+// Output HTML
+ob_end_flush(); // Flush buffer for HTML output
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,6 +229,13 @@ if(isset($_POST['update_qty'])){
         <h2>Product Inventory</h2>
         <input type="text" id="searchBox" placeholder="🔍 Search item..." style="padding:8px; width:300px; border:1px solid #ccc; border-radius:5px; margin-bottom:10px;">
 
+        <!-- ✅ Category Filter -->
+        <div style="margin:10px 0;">
+            <?php foreach($categories as $cat): ?>
+                <a href="?category=<?=urlencode($cat)?>" style="margin-right:10px; <?= $selectedCategory==$cat?'font-weight:bold;':'' ?>"><?=htmlspecialchars($cat)?></a>
+            <?php endforeach; ?>
+        </div>
+
         <table id="itemTable">
             <thead style="background:#f2f2f2;">
                 <tr>
@@ -128,15 +250,11 @@ if(isset($_POST['update_qty'])){
             </thead>
             <tbody>
                 <?php
-                $items = $conn->query("SELECT * FROM products ORDER BY productName ASC");
-                if($items && $items->num_rows > 0){
-                    while($row = $items->fetch_assoc()){
+                if($items && $items->num_rows>0){
+                    while($row=$items->fetch_assoc()){
                         echo "<tr>";
                         echo "<td>".$row['productID']."</td>";
-                        echo "<td>";
-                        if(!empty($row['productsImg'])) echo "<img src='".htmlspecialchars($row['productsImg'])."' style='width:60px; height:60px; object-fit:cover; border-radius:8px;'>";
-                        else echo "<span style='color:#999;'>No Image</span>";
-                        echo "</td>";
+                        echo "<td>".(!empty($row['productsImg'])? "<img src='".htmlspecialchars($row['productsImg'])."' style='width:60px;height:60px;object-fit:cover;border-radius:8px;'>":"<span style='color:#999;'>No Image</span>")."</td>";
                         echo "<td>".htmlspecialchars($row['productName'])."</td>";
                         echo "<td>".htmlspecialchars($row['category'])."</td>";
                         echo "<td>₱".number_format($row['price'],2)."</td>";
@@ -153,6 +271,17 @@ if(isset($_POST['update_qty'])){
                 ?>
             </tbody>
         </table>
+
+        <!-- ✅ Pagination -->
+        <div style="margin-top:10px;">
+            <?php if($page>1): ?>
+                <a href="?page=<?= $page-1 ?>&category=<?=urlencode($selectedCategory)?>">&lt; Previous</a>
+            <?php endif; ?>
+            Page <?=$page?> of <?=$totalPages?>
+            <?php if($page<$totalPages): ?>
+                <a href="?page=<?= $page+1 ?>&category=<?=urlencode($selectedCategory)?>">Next &gt;</a>
+            <?php endif; ?>
+        </div>
     </section>
 </div>
 
@@ -178,60 +307,24 @@ $(document).ready(function(){
 
     // Open cart modal
     var modal = $("#cartModal");
-    $("#openCartBtn").click(function(){
-        loadCart();
-        modal.show();
-    });
+    $("#openCartBtn").click(function(){ loadCart(); modal.show(); });
     $(".close").click(function(){ modal.hide(); });
     $(window).click(function(e){ if(e.target.id=="cartModal") modal.hide(); });
 
-    // Load cart content via AJAX
-    function loadCart(){
-        $.get('get_cart.php', function(data){
-            $('#cartContent').html(data);
-        });
-    }
+    function loadCart(){ $.get('get_cart.php', function(data){ $('#cartContent').html(data); }); }
+    function updateBadge(){ $.get('get_count.php', function(count){ $('#cartCountBadge').text(count); }); }
 
-    // Update cart badge
-    function updateBadge(){
-        $.get('get_count.php', function(count){
-            $('#cartCountBadge').text(count);
-        });
-    }
-
-    // Add to cart via AJAX
     $(".add-to-cart-btn").click(function(){
         let productID = $(this).data("id");
         let quantity = $(this).siblings(".cart-qty").val();
         $.post("cashier-items.php", { add_to_cart: 1, productID: productID, quantity: quantity }, function(){
             loadCart();
             updateBadge();
-            
         });
     });
 
-    // Update quantity via AJAX
-      // Update quantity via AJAX
-$(document).on('submit', '.update_qty_form', function(e){
-    e.preventDefault();
-    // $(this).serialize() sends all form fields, including the new hidden 'update_qty' field.
-    $.post('cashier-items.php', $(this).serialize(), function(response){
-        // You've correctly called loadCart() here to refresh the modal content
-        loadCart(); 
-        updateBadge();
-    });
-});
-
-// Remove from cart via AJAX
-// This section is also correct, assuming the class remove_cart_form is in get_cart.php
-$(document).on('submit', '.remove_cart_form', function(e){
-    e.preventDefault();
-    // $(this).serialize() sends all form fields, including the new hidden 'remove_cart' field.
-    $.post('cashier-items.php', $(this).serialize(), function(response){
-        loadCart();
-        updateBadge();
-    });
-});
+    $(document).on('submit', '.update_qty_form', function(e){ e.preventDefault(); $.post('cashier-items.php', $(this).serialize(), function(){ loadCart(); updateBadge(); }); });
+    $(document).on('submit', '.remove_cart_form', function(e){ e.preventDefault(); $.post('cashier-items.php', $(this).serialize(), function(){ loadCart(); updateBadge(); }); });
 });
 </script>
 </body>

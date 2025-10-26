@@ -67,11 +67,62 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
         $stmt->bind_param("ssdisi", $name, $cat, $price, $qty, $supplier, $id);
     }
     $stmt->execute();
-    header("Location: product-admin.php");
+    header("Location: products-admin.php");
     exit();
 }
 
-$result = $conn->query("SELECT * FROM products ORDER BY dateAdded ASC");
+// ✅ Pagination & filters
+$limit = 4;
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
+
+$category = isset($_GET['category']) ? $_GET['category'] : '';
+$search = isset($_GET['search']) ? $_GET['search'] : '';
+
+$where = "WHERE 1";
+$params = [];
+$types = "";
+
+if (!empty($category) && $category !== "All Items") {
+    $where .= " AND category = ?";
+    $params[] = $category;
+    $types .= "s";
+}
+if (!empty($search)) {
+    $where .= " AND productName LIKE ?";
+    $params[] = "%$search%";
+    $types .= "s";
+}
+
+$sql = "SELECT * FROM products $where ORDER BY category ASC, dateAdded DESC LIMIT ?, ?";
+$params[] = $offset;
+$params[] = $limit;
+$types .= "ii";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$countQuery = "SELECT COUNT(*) as total FROM products $where";
+$countStmt = $conn->prepare($countQuery);
+if ($types !== "ii") {
+    $bindTypes = substr($types, 0, -2);
+    $countStmt->bind_param($bindTypes, ...array_slice($params, 0, -2));
+}
+$countStmt->execute();
+$totalRows = $countStmt->get_result()->fetch_assoc()['total'];
+$totalPages = ceil($totalRows / $limit);
+
+// ✅ Category list (with "All Items")
+$categories = [
+    "All Items",
+    "Engine & Transmission",
+    "Braking System",
+    "Suspension & Steering",
+    "Electrical & Lighting",
+    "Tires & Wheels"
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -89,6 +140,22 @@ $result = $conn->query("SELECT * FROM products ORDER BY dateAdded ASC");
             <button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+ Add Product</button>
         </header>
 
+        <section>
+        
+            <form method="GET" style="margin-bottom:10px;">
+                <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="🔍 Search item..." 
+                       style="padding:8px; width:300px; border:1px solid #ccc; border-radius:5px;">
+                <button type="submit">Search</button>
+            </form>
+
+            <p>Products (
+            <?php foreach ($categories as $cat): ?>
+                <a href="?category=<?= urlencode($cat) ?>"><?= htmlspecialchars($cat) ?></a>
+                <?= $cat !== end($categories) ? '/' : '' ?>
+            <?php endforeach; ?>
+            )</p>
+        </section>
+
         <table class="products-table">
             <thead>
                 <tr>
@@ -104,36 +171,50 @@ $result = $conn->query("SELECT * FROM products ORDER BY dateAdded ASC");
                 </tr>
             </thead>
             <tbody>
-                <?php while($row = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?= $row['productID']; ?></td>
-                    <td>
-                        <?php if(!empty($row['productsImg'])): ?>
-                            <img src="<?= $row['productsImg']; ?>" style="width:60px; height:60px; object-fit:cover;">
-                        <?php else: ?>
-                            <span>No Image</span>
-                        <?php endif; ?>
-                    </td>
-                    <td><?= htmlspecialchars($row['productName']); ?></td>
-                    <td><?= htmlspecialchars($row['category']); ?></td>
-                    <td>₱<?= number_format($row['price'], 2); ?></td>
-                    <td><?= $row['stockQuantity']; ?></td>
-                    <td><?= $row['supplierID']; ?></td>
-                    <td><?= $row['dateAdded']; ?></td>
-                    <td>
-                        <form method="POST" style="display:inline-block;" enctype="multipart/form-data">
-                            <input type="hidden" name="updateID" value="<?= $row['productID']; ?>">
-                            <button type="button" onclick="openUpdateModal('<?= $row['productID']; ?>','<?= htmlspecialchars($row['productName']); ?>','<?= htmlspecialchars($row['category']); ?>','<?= $row['price']; ?>','<?= $row['stockQuantity']; ?>','<?= $row['supplierID']; ?>')">✏ Update</button>
-                        </form>
-                        <form method="POST" style="display:inline-block;">
-                            <input type="hidden" name="deleteID" value="<?= $row['productID']; ?>">
-                            <button type="submit" name="delete_product" onclick="return confirm('Delete this product?')">🗑 Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
+                <?php if ($result->num_rows > 0): ?>
+                    <?php while($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= $row['productID']; ?></td>
+                            <td>
+                                <?php if(!empty($row['productsImg'])): ?>
+                                    <img src="<?= $row['productsImg']; ?>" style="width:60px; height:60px; object-fit:cover;">
+                                <?php else: ?>
+                                    <span>No Image</span>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= htmlspecialchars($row['productName']); ?></td>
+                            <td><?= htmlspecialchars($row['category']); ?></td>
+                            <td>₱<?= number_format($row['price'], 2); ?></td>
+                            <td><?= $row['stockQuantity']; ?></td>
+                            <td><?= $row['supplierID']; ?></td>
+                            <td><?= $row['dateAdded']; ?></td>
+                            <td>
+                                <button type="button"
+                                    onclick="openUpdateModal('<?= $row['productID']; ?>','<?= htmlspecialchars($row['productName']); ?>','<?= htmlspecialchars($row['category']); ?>','<?= $row['price']; ?>','<?= $row['stockQuantity']; ?>','<?= $row['supplierID']; ?>')">✏ Update</button>
+                                <form method="POST" style="display:inline-block;">
+                                    <input type="hidden" name="deleteID" value="<?= $row['productID']; ?>">
+                                    <button type="submit" name="delete_product" onclick="return confirm('Delete this product?')">🗑 Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr><td colspan="9">No products found.</td></tr>
+                <?php endif; ?>
             </tbody>
         </table>
+
+        <div style="margin-top:10px;">
+            <?php if ($page > 1): ?>
+                <a href="?page=<?= $page - 1 ?>&category=<?= urlencode($category) ?>&search=<?= urlencode($search) ?>">&lt; Previous</a>
+            <?php endif; ?>
+
+            Page <?= $page ?> of <?= $totalPages ?>
+
+            <?php if ($page < $totalPages): ?>
+                <a href="?page=<?= $page + 1 ?>&category=<?= urlencode($category) ?>&search=<?= urlencode($search) ?>">Next &gt;</a>
+            <?php endif; ?>
+        </div>
     </div>
 
     <!-- Add Product Modal -->
@@ -145,11 +226,9 @@ $result = $conn->query("SELECT * FROM products ORDER BY dateAdded ASC");
                 <input type="text" name="productName" placeholder="Name" required><br>
                 <select name="category" required>
                     <option value="">-- Select Category --</option>
-                    <option value="Engine & Transmission">Engine & Transmission</option>
-                    <option value="Braking System">Braking System</option>
-                    <option value="Suspension & Steering">Suspension & Steering</option>
-                    <option value="Electrical & Lighting">Electrical & Lighting</option>
-                    <option value="Tires & Wheels">Tires & Wheels</option>
+                    <?php foreach (array_slice($categories, 1) as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat) ?>"><?= htmlspecialchars($cat) ?></option>
+                    <?php endforeach; ?>
                 </select><br>
                 <input type="number" step="0.01" name="price" placeholder="Price" required><br>
                 <input type="number" name="stockQuantity" placeholder="Quantity" required><br>
@@ -170,11 +249,9 @@ $result = $conn->query("SELECT * FROM products ORDER BY dateAdded ASC");
                 <input type="text" name="updateName" id="updateName" placeholder="Name"><br>
                 <select name="updateCategory" id="updateCategory">
                     <option value="">-- Select Category --</option>
-                    <option value="Engine & Transmission">Engine & Transmission</option>
-                    <option value="Braking System">Braking System</option>
-                    <option value="Suspension & Steering">Suspension & Steering</option>
-                    <option value="Electrical & Lighting">Electrical & Lighting</option>
-                    <option value="Tires & Wheels">Tires & Wheels</option>
+                    <?php foreach (array_slice($categories, 1) as $cat): ?>
+                        <option value="<?= htmlspecialchars($cat) ?>"><?= htmlspecialchars($cat) ?></option>
+                    <?php endforeach; ?>
                 </select><br>
                 <input type="number" step="0.01" name="updatePrice" id="updatePrice" placeholder="Price"><br>
                 <input type="number" name="updateStock" id="updateStock" placeholder="Quantity"><br>
