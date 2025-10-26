@@ -44,6 +44,5 @@ include "sidebar-cashier.php";
             </form>
         </section>
     </div>
-
 </body>
 </html>
