@@ -37,13 +37,7 @@ include "sidebar-cashier.php";
 
         <section>
             <h2>Dashboard Overview</h2>
-            <p>Use the sidebar or buttons above to navigate to specific sections.</p>
-            <ul>
-                <li><a href="cashier-items.php">Browse Available Items</a></li>
-                <li><a href="cashier-payments.php">View Paid Records</a></li>
-                <li><a href="cashier-messages.php">Send a Message to Sales</a></li>
-                <li><a href="cashier-receipts.php">Generate a Receipt</a></li>
-            </ul>
+            
         </section>
     </div>
 

@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// ✅ Protect page
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
     exit();
@@ -9,33 +8,31 @@ if (!isset($_SESSION['username'])) {
 
 require 'db.php';
 
-// ✅ Insert Client
+// ✅ Add Client
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_client'])) {
     $clientName    = $_POST['clientName'];
     $contactNumber = $_POST['contactNumber'];
     $email         = $_POST['email'];
     $address       = $_POST['address'];
 
-    $stmt = $conn->prepare("INSERT INTO clientinfo (clientName, contactNumber, email, address) 
-                            VALUES (?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO clientinfo (clientName, contactNumber, email, address, registeredDate)
+                            VALUES (?, ?, ?, ?, NOW())");
     $stmt->bind_param("ssss", $clientName, $contactNumber, $email, $address);
     $stmt->execute();
     $stmt->close();
 
-    header("Location: clients.php");
+    header("Location: clients-admin.php");
     exit();
 }
 
-// ✅ Delete Client
+// ✅ Delete Client (AJAX)
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_client'])) {
     $deleteID = intval($_POST['deleteID']);
-
     $stmt = $conn->prepare("DELETE FROM clientinfo WHERE clientID = ?");
     $stmt->bind_param("i", $deleteID);
-    $stmt->execute();
-    $stmt->close();
 
-    header("Location: clients.php");
+    echo $stmt->execute() ? "success" : "error";
+    $stmt->close();
     exit();
 }
 
@@ -51,10 +48,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_client'])) {
                             SET clientName=?, contactNumber=?, email=?, address=? 
                             WHERE clientID=?");
     $stmt->bind_param("ssssi", $clientName, $contactNumber, $email, $address, $updateID);
-    $stmt->execute();
-    $stmt->close();
 
-    header("Location: clients.php");
+    if ($stmt->execute()) {
+        echo "<script>alert('✅ Client updated successfully!'); window.location='clients-admin.php';</script>";
+    } else {
+        echo "<script>alert('❌ Error updating client.'); window.location='clients-admin.php';</script>";
+    }
+
+    $stmt->close();
     exit();
 }
 
@@ -66,124 +67,136 @@ $result = $conn->query("SELECT * FROM clientinfo ORDER BY clientID ASC");
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Clients</title>
+    <title>Clients (Admin)</title>
     <link rel="stylesheet" href="css/client.css">
 </head>
+
+<script>
+function confirmDelete(clientID, event) {
+    if (!confirm("Are you sure you want to delete this client?")) return;
+
+    fetch('clients-admin.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            delete_client: '1',
+            deleteID: clientID
+        })
+    })
+    .then(r => r.text())
+    .then(data => {
+        if (data.trim() === "success") {
+            alert("🗑️ Client deleted successfully!");
+            const row = event.target.closest('tr');
+            row.style.opacity = '0';
+            setTimeout(() => row.remove(), 300);
+        } else alert("❌ Error deleting client.");
+    })
+    .catch(() => alert("⚠️ Error connecting to server."));
+}
+
+function openUpdateModal(id, name, number, email, address) {
+    document.getElementById('updateModal').style.display = 'flex';
+    document.getElementById('updateID').value = id;
+    document.getElementById('updateName').value = name;
+    document.getElementById('updateNumber').value = number;
+    document.getElementById('updateEmail').value = email;
+    document.getElementById('updateAddress').value = address;
+}
+</script>
+
 <body>
 
-    <!-- Sidebar -->
-    <?php
-            include("sidebar-admin.php")
-    ?>
-    <!-- Main Content -->
-    <div class="main-content">
-        <header class="topbar">
-            <h1>👥 Clients</h1>
-            <div class="settings-menu">
-                <button class="settings-btn">&#9776;</button>
-                <div class="settings-dropdown">
-                    <button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+ Add Client</button>
-                    <button class="delete-btn" onclick="document.getElementById('deleteModal').style.display='flex'">🗑 Delete Client</button>
-                    <button class="update-btn" onclick="document.getElementById('updateModal').style.display='flex'">✏ Update Client</button>
-                </div>
-            </div>
-        </header>
+<?php include("sidebar-admin.php"); ?>
 
-        <!-- Client Table -->
-        <table class="supplier-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Client Name</th>
-                    <th>Contact Number</th>
-                    <th>Email</th>
-                    <th>Address</th>
-                    <th>Registered Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php while($row = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?= $row['clientID']; ?>:</td>
-                    <td><?= htmlspecialchars($row['clientName']); ?></td>
-                    <td><?= htmlspecialchars($row['contactNumber']); ?></td>
-                    <td><?= htmlspecialchars($row['email']); ?></td>
-                    <td><?= htmlspecialchars($row['address']); ?></td>
-                    <td><?= $row['registeredDate']; ?></td>
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+<div class="main-content">
+    <header class="topbar">
+        <h1>👥 Client Management</h1>
+    </header>
+
+    <table class="supplier-table">
+        <thead>
+            <tr>
+                <th>Client Name</th>
+                <th>Contact Number</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Registered Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while($row = $result->fetch_assoc()): ?>
+            <tr>
+                <td><?= htmlspecialchars($row['clientName']); ?></td>
+                <td><?= htmlspecialchars($row['contactNumber']); ?></td>
+                <td><?= htmlspecialchars($row['email']); ?></td>
+                <td><?= htmlspecialchars($row['address']); ?></td>
+                <td><?= htmlspecialchars($row['registeredDate']); ?></td>
+                <td>
+                    <button class="update-btn"
+                        onclick="openUpdateModal(
+                            '<?= $row['clientID']; ?>',
+                            '<?= htmlspecialchars($row['clientName']); ?>',
+                            '<?= htmlspecialchars($row['contactNumber']); ?>',
+                            '<?= htmlspecialchars($row['email']); ?>',
+                            '<?= htmlspecialchars($row['address']); ?>'
+                        )">Update</button>
+
+                    <button class="delete-btn" onclick="confirmDelete(<?= $row['clientID']; ?>, event)">Delete</button>
+                </td>
+            </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Client Modal -->
+<div class="modal" id="addModal">
+    <div class="modal-content">
+        <h3>Add Client</h3>
+        <form method="POST" action="clients-admin.php">
+            <label>Name:</label>
+            <input type="text" name="clientName" required><br>
+
+            <label>Contact:</label>
+            <input type="text" name="contactNumber"><br>
+
+            <label>Email:</label>
+            <input type="email" name="email"><br>
+
+            <label>Address:</label>
+            <input type="text" name="address"><br>
+
+            <button type="submit" name="add_client">Save</button>
+            <button type="button" onclick="document.getElementById('addModal').style.display='none'">Cancel</button>
+        </form>
     </div>
+</div>
 
-    <!-- Add Client Modal -->
-    <div class="modal" id="modal">
-        <div class="modal-content">
-            <h3>Add New Client</h3>
-            <form method="POST" action="clients.php">
-                <label>Client Name:</label>
-                <input type="text" name="clientName" required><br>
+<!-- Update Modal -->
+<div class="modal" id="updateModal">
+    <div class="modal-content">
+        <h3>Update Client</h3>
+        <form method="POST" action="clients-admin.php">
+            <input type="hidden" name="updateID" id="updateID">
+            <label>Name:</label>
+            <input type="text" name="updateName" id="updateName" required><br>
 
-                <label>Contact Number:</label>
-                <input type="text" name="contactNumber"><br>
+            <label>Contact:</label>
+            <input type="text" name="updateNumber" id="updateNumber"><br>
 
-                <label>Email:</label>
-                <input type="email" name="email"><br>
+            <label>Email:</label>
+            <input type="email" name="updateEmail" id="updateEmail"><br>
 
-                <label>Address:</label>
-                <input type="text" name="address"><br>
+            <label>Address:</label>
+            <input type="text" name="updateAddress" id="updateAddress"><br>
 
-                <button type="submit" name="add_client">Save</button>
-                <button type="button" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
-            </form>
-        </div>
+            <button type="submit" name="update_client">Update</button>
+            <button type="button" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
+        </form>
     </div>
-
-    <!-- Delete Client Modal -->
-    <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <h3>Delete Client</h3>
-            <form method="POST" action="clients.php">
-                <label>Enter Client ID to Delete:</label>
-                <input type="number" name="deleteID" required><br>
-                <button type="submit" name="delete_client">Delete</button>
-                <button type="button" onclick="document.getElementById('deleteModal').style.display='none'">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Update Client Modal -->
-    <div class="modal" id="updateModal">
-        <div class="modal-content">
-            <h3>Update Client</h3>
-            <form method="POST" action="clients.php">
-                <label>Client ID (to update):</label>
-                <input type="number" name="updateID" required><br>
-
-                <label>New Client Name:</label>
-                <input type="text" name="updateName"><br>
-
-                <label>New Contact Number:</label>
-                <input type="text" name="updateNumber"><br>
-
-                <label>New Email:</label>
-                <input type="email" name="updateEmail"><br>
-
-                <label>New Address:</label>
-                <input type="text" name="updateAddress"><br>
-
-                <button type="submit" name="update_client">Update</button>
-                <button type="button" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // Toggle settings dropdown
-        document.querySelector(".settings-btn").addEventListener("click", function() {
-            document.querySelector(".settings-menu").classList.toggle("show");
-        });
-    </script>
+</div>
 
 </body>
 </html>
