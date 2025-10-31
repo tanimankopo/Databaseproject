@@ -17,7 +17,7 @@
             <li><a href="clients-sales.php"<?php if(basename($_SERVER['PHP_SELF']) == 'clients-sales.php') echo 'class="active"'; ?>>👥 Clients</a></li>
             <li><a href="sales-sales.php"<?php if(basename($_SERVER['PHP_SELF']) == 'sales-sales.php') echo 'class="active"'; ?>>💰 Sales</a></li>
             <li><a href="sales-messages.php"<?php if(basename($_SERVER['PHP_SELF']) == 'sales-messages.php') echo 'class="active"'; ?>>💬 Messages</a></li>
-            <li><a href="sales-approval.php"<?php if(basename($_SERVER['PHP_SELF']) == 'sales-approval.php') echo 'class="active"'; ?>>💬 Pending</a></li>
+            <li><a href="sales-approval.php"<?php if(basename($_SERVER['PHP_SELF']) == 'sales-approval.php') echo 'class="active"'; ?>>🗂️ Status</a></li>
         </ul>
         <div class="sidebar-footer">
             <form action="logout.php" method="post">
