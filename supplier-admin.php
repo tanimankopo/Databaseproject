@@ -35,11 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_supplier'])) {
     $stmt = $conn->prepare("DELETE FROM supplier WHERE supplierID = ?");
     $stmt->bind_param("i", $deleteID);
 
-    if ($stmt->execute()) {
-        echo "success";
-    } else {
-        echo "error";
-    }
+    echo $stmt->execute() ? "success" : "error";
 
     $stmt->close();
     exit();
@@ -59,13 +55,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_supplier'])) {
                             SET supplierName=?, contactPerson=?, contactNumber=?, email=?, address=?, status=? 
                             WHERE supplierID=?");
     $stmt->bind_param("ssssssi", $supplierName, $contactPerson, $contactNumber, $email, $address, $status, $updateID);
+    $stmt->execute();
 
-    if ($stmt->execute()) {
-        echo "<script>alert('✅ Supplier updated successfully!'); window.location='supplier-admin.php';</script>";
-    } else {
-        echo "<script>alert('❌ Error updating supplier.'); window.location='supplier-admin.php';</script>";
-    }
-
+    echo "<script>alert('✅ Supplier updated successfully!'); window.location='supplier-admin.php';</script>";
     $stmt->close();
     exit();
 }
@@ -73,7 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_supplier'])) {
 // ✅ Fetch Suppliers
 $result = $conn->query("SELECT * FROM supplier ORDER BY supplierID ASC");
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -120,6 +111,7 @@ function confirmDelete(supplierID, event) {
 <div class="main-content">
     <header class="topbar">
         <h1>🏭 Supplier Management</h1>
+        <button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+ Add Supplier</button>
     </header>
 
     <!-- ✅ Supplier Table -->
@@ -166,32 +158,50 @@ function confirmDelete(supplierID, event) {
     </table>
 </div>
 
+<!-- ✅ Add Supplier Modal -->
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3>Add Supplier</h3>
+        <form method="POST" action="supplier-admin.php">
+            <input type="text" name="supplierName" placeholder="Supplier Name" required><br>
+            <input type="text" name="contactPerson" placeholder="Contact Person" required><br>
+            <input type="text" name="contactNumber" placeholder="Contact Number" required><br>
+            <input type="email" name="email" placeholder="Email Address" required><br>
+            <input type="text" name="address" placeholder="Address" required><br>
+
+            <!-- ✅ Status Dropdown -->
+            <select name="status" required style="padding:8px; border:1px solid #ccc; border-radius:5px; margin-bottom:10px;">
+                <option value="">-- Select Status --</option>
+                <option value="Active">Active</option>
+                <option value="Not Active">Not Active</option>
+            </select><br>
+
+            <button type="submit" name="add_supplier">Save</button>
+            <button type="button" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
+        </form>
+    </div>
+</div>
+
 <!-- ✅ Update Supplier Modal -->
 <div class="modal" id="updateModal">
     <div class="modal-content">
         <h3>Update Supplier</h3>
         <form method="POST" action="supplier-admin.php">
             <input type="hidden" name="updateID" id="updateID">
-
             <label>Supplier Name:</label>
             <input type="text" name="updateSupplierName" id="updateSupplierName" required><br>
-
             <label>Contact Person:</label>
             <input type="text" name="updateContactPerson" id="updateContactPerson" required><br>
-
             <label>Contact Number:</label>
             <input type="text" name="updateContact" id="updateContact" required><br>
-
             <label>Email:</label>
             <input type="email" name="updateEmail" id="updateEmail" required><br>
-
             <label>Address:</label>
             <input type="text" name="updateAddress" id="updateAddress" required><br>
-
             <label>Status:</label>
             <select name="updateStatus" id="updateStatus">
                 <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option value="Not Active">Not Active</option>
             </select><br>
 
             <div style="margin-top:10px;">
