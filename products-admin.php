@@ -72,7 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
 }
 
 // ✅ Pagination & filters
-$limit = 4;
+$limit = 5;
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
 
@@ -141,19 +141,46 @@ $categories = [
         </header>
 
         <section>
-        
-            <form method="GET" style="margin-bottom:10px;">
-                <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="🔍 Search item..." 
-                       style="padding:8px; width:300px; border:1px solid #ccc; border-radius:5px;">
-                <button type="submit">Search</button>
-            </form>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
 
-            <p>Products (
-            <?php foreach ($categories as $cat): ?>
-                <a href="?category=<?= urlencode($cat) ?>"><?= htmlspecialchars($cat) ?></a>
-                <?= $cat !== end($categories) ? '/' : '' ?>
-            <?php endforeach; ?>
-            )</p>
+                    <!-- CATEGORY FILTER (auto-submit on change) -->
+                    <form method="GET" style="margin: 0;">
+                        <select name="category"
+                                onchange="this.form.submit()"
+                                style="padding:8px; border:1px solid #ccc; border-radius:5px;">
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?= htmlspecialchars($cat) ?>"
+                                    <?= ($cat === $category) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($cat) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <!-- preserve search if user has typed something -->
+                        <?php if (!empty($search)): ?>
+                            <input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>">
+                        <?php endif; ?>
+                    </form>
+
+                    <!-- SEARCH BAR (for specific product name) -->
+                    <form method="GET" style="display: flex; align-items: center; gap: 10px; margin: 0;">
+                        <!-- preserve selected category -->
+                        <input type="hidden" name="category" value="<?= htmlspecialchars($category) ?>">
+
+                        <input type="text" name="search"
+                            value="<?= htmlspecialchars($search) ?>"
+                            placeholder="🔍 Search by product name..."
+                            style="padding:8px; width:300px; border:1px solid #ccc; border-radius:5px;">
+
+                        <button type="submit"
+                            style="padding:8px 15px; border:none; background:#007bff; color:white; border-radius:5px; cursor:pointer;">
+                            🔎 FIND
+                        </button>
+                    </form>
+
+                </div>
+                    
+                                  
         </section>
 
         <table class="products-table">
@@ -162,7 +189,6 @@ $categories = [
                     <th>ID</th>
                     <th>Image</th>
                     <th>Name</th>
-                    <th>Category</th>
                     <th>Price</th>
                     <th>Qty</th>
                     <th>Supplier ID</th>
@@ -183,7 +209,6 @@ $categories = [
                                 <?php endif; ?>
                             </td>
                             <td><?= htmlspecialchars($row['productName']); ?></td>
-                            <td><?= htmlspecialchars($row['category']); ?></td>
                             <td>₱<?= number_format($row['price'], 2); ?></td>
                             <td><?= $row['stockQuantity']; ?></td>
                             <td><?= $row['supplierID']; ?></td>

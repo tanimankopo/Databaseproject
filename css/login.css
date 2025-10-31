@@ -34,8 +34,8 @@ body {
 
 /* Logo circle */
 .logo-circle {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     background: linear-gradient(135deg, #667eea, #764ba2); /* Matches body gradient */
     border-radius: 50%;
     display: flex;

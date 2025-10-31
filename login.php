@@ -62,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login'])) {
 </head>
 <body>
     <div class="login-container">
-        <div class="logo-circle">LOGO</div>
+        
         <h2>User Login</h2>
 
         <!-- ✅ Error message (hidden if empty) -->
