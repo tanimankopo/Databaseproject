@@ -9,7 +9,7 @@ if (!isset($_SESSION['username']) ||
 }
 
 include "db.php";
-include "cashier-sidebar.php";
+include "admin-sidebar.php";
 ?>
 
 <!DOCTYPE html>

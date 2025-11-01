@@ -24,7 +24,7 @@ $lowStockCount = $lowStockResult->num_rows;
 <body>
     
     <?php
-            include("sidebar-admin.php")
+            include("admin-sidebar.php")
     ?>
 
     <!-- Main Content -->

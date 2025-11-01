@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_product'])) {
                             VALUES (?, ?, ?, ?, ?, ?, NOW())");
     $stmt->bind_param("sssdis", $imgPath, $name, $cat, $price, $qty, $supplier);
     $stmt->execute();
-    header("Location: products-admin.php");
+    header("Location: admin-products.php");
     exit();
 }
 
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_product'])) {
     $stmt = $conn->prepare("DELETE FROM products WHERE productID = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
-    header("Location: products-admin.php");
+    header("Location: admin-products.php");
     exit();
 }
 
@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_product'])) {
         $stmt->bind_param("ssdisi", $name, $cat, $price, $qty, $supplier, $id);
     }
     $stmt->execute();
-    header("Location: products-admin.php");
+    header("Location: admin-products.php");
     exit();
 }
 
@@ -135,7 +135,10 @@ $categories = [
     <link rel="stylesheet" type="text/css" href="css/products.css">
 </head>
 <body>
-    <?php include("sidebar-admin.php") ?>
+    
+    <?php 
+    include("admin-sidebar.php")
+     ?>
 
     <div class="main-content">
         <header class="topbar">

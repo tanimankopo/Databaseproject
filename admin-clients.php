@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_client'])) {
     $stmt->execute();
     $stmt->close();
 
-    header("Location: clients-admin.php");
+    header("Location: admin-clients.php");
     exit();
 }
 
@@ -50,9 +50,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_client'])) {
     $stmt->bind_param("ssssi", $clientName, $contactNumber, $email, $address, $updateID);
 
     if ($stmt->execute()) {
-        echo "<script>alert('✅ Client updated successfully!'); window.location='clients-admin.php';</script>";
+        echo "<script>alert('✅ Client updated successfully!'); window.location='admin-clients.php';</script>";
     } else {
-        echo "<script>alert('❌ Error updating client.'); window.location='clients-admin.php';</script>";
+        echo "<script>alert('❌ Error updating client.'); window.location='admin-clients.php';</script>";
     }
 
     $stmt->close();
@@ -107,7 +107,7 @@ function openUpdateModal(id, name, number, email, address) {
 
 <body>
 
-<?php include("sidebar-admin.php"); ?>
+<?php include("admin-sidebar.php"); ?>
 
 <div class="main-content">
     <header class="topbar">

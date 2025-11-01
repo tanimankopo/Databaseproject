@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_supplier'])) {
     $stmt->execute();
     $stmt->close();
 
-    header("Location: supplier-admin.php");
+    header("Location: admin-supplier.php");
     exit();
 }
 
@@ -61,9 +61,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_supplier'])) {
     $stmt->bind_param("ssssssi", $supplierName, $contactPerson, $contactNumber, $email, $address, $status, $updateID);
 
     if ($stmt->execute()) {
-        echo "<script>alert('✅ Supplier updated successfully!'); window.location='supplier-admin.php';</script>";
+        echo "<script>alert('✅ Supplier updated successfully!'); window.location='admin-supplier.php';</script>";
     } else {
-        echo "<script>alert('❌ Error updating supplier.'); window.location='supplier-admin.php';</script>";
+        echo "<script>alert('❌ Error updating supplier.'); window.location='admin-supplier.php';</script>";
     }
 
     $stmt->close();
@@ -73,6 +73,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['update_supplier'])) {
 // ✅ Fetch Suppliers
 $result = $conn->query("SELECT * FROM supplier ORDER BY supplierID ASC");
 ?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,11 +117,12 @@ function confirmDelete(supplierID, event) {
 </script>
 
 <body>
-<?php include("sidebar-admin.php") ?>
+<?php include("admin-sidebar.php") ?>
 
 <div class="main-content">
     <header class="topbar">
         <h1>🏭 Supplier Management</h1>
+        <button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+ Add Supplier</button>
     </header>
 
     <!-- ✅ Supplier Table -->
@@ -164,56 +168,88 @@ function confirmDelete(supplierID, event) {
         </tbody>
     </table>
 </div>
+            <!-- Add Supplier Modal -->
+                <div class="modal" id="modal">
+                    <div class="modal-content">
+                        <h3>Add New Supplier</h3>
+                        <form method="POST" action="supplier.php">
+                            <label>Supplier Name:</label>
+                            <input type="text" name="supplierName" required><br>
 
-<!-- ✅ Update Supplier Modal -->
-<div class="modal" id="updateModal">
-    <div class="modal-content">
-        <h3>Update Supplier</h3>
-        <form method="POST" action="supplier-admin.php">
-            <input type="hidden" name="updateID" id="updateID">
+                            <label>Contact Person:</label>
+                            <input type="text" name="contactPerson"><br>
 
-            <label>Supplier Name:</label>
-            <input type="text" name="updateSupplierName" id="updateSupplierName" required><br>
+                            <label>Contact Number:</label>
+                            <input type="text" name="contactNumber"><br>
 
-            <label>Contact Person:</label>
-            <input type="text" name="updateContactPerson" id="updateContactPerson" required><br>
+                            <label>Email:</label>
+                            <input type="email" name="email"><br>
 
-            <label>Contact Number:</label>
-            <input type="text" name="updateContact" id="updateContact" required><br>
+                            <label>Address:</label>
+                            <input type="text" name="address"><br>
 
-            <label>Email:</label>
-            <input type="email" name="updateEmail" id="updateEmail" required><br>
+                            <label>Status:</label>
+                            <select name="status">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select><br>
 
-            <label>Address:</label>
-            <input type="text" name="updateAddress" id="updateAddress" required><br>
+                            <button type="submit" name="add_supplier">Save</button>
+                            <button type="button" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
+                        </form>
+                    </div>
+                </div>
 
-            <label>Status:</label>
-            <select name="updateStatus" id="updateStatus">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-            </select><br>
 
-            <div style="margin-top:10px;">
-                <button type="submit" name="update_supplier">Update</button>
-                <button type="button" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
+            <!-- ✅ Update Supplier Modal -->
+            <div class="modal" id="updateModal">
+                <div class="modal-content">
+                    <h3>Update Supplier</h3>
+                    <form method="POST" action="supplier-admin.php">
+                        <input type="hidden" name="updateID" id="updateID">
+
+                        <label>Supplier Name:</label>
+                        <input type="text" name="updateSupplierName" id="updateSupplierName" required><br>
+
+                        <label>Contact Person:</label>
+                        <input type="text" name="updateContactPerson" id="updateContactPerson" required><br>
+
+                        <label>Contact Number:</label>
+                        <input type="text" name="updateContact" id="updateContact" required><br>
+
+                        <label>Email:</label>
+                        <input type="email" name="updateEmail" id="updateEmail" required><br>
+
+                        <label>Address:</label>
+                        <input type="text" name="updateAddress" id="updateAddress" required><br>
+
+                        <label>Status:</label>
+                        <select name="updateStatus" id="updateStatus">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select><br>
+
+                        <div style="margin-top:10px;">
+                            <button type="submit" name="update_supplier">Update</button>
+                            <button type="button" onclick="document.getElementById('updateModal').style.display='none'">Cancel</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
-    </div>
-</div>
 
-<script>
-// ✅ Open Update Modal
-function openUpdateModal(id, name, person, number, email, address, status) {
-    document.getElementById('updateModal').style.display = 'flex';
-    document.getElementById('updateID').value = id;
-    document.getElementById('updateSupplierName').value = name;
-    document.getElementById('updateContactPerson').value = person;
-    document.getElementById('updateContact').value = number;
-    document.getElementById('updateEmail').value = email;
-    document.getElementById('updateAddress').value = address;
-    document.getElementById('updateStatus').value = status;
-}
-</script>
+            <script>
+            // ✅ Open Update Modal
+            function openUpdateModal(id, name, person, number, email, address, status) {
+                document.getElementById('updateModal').style.display = 'flex';
+                document.getElementById('updateID').value = id;
+                document.getElementById('updateSupplierName').value = name;
+                document.getElementById('updateContactPerson').value = person;
+                document.getElementById('updateContact').value = number;
+                document.getElementById('updateEmail').value = email;
+                document.getElementById('updateAddress').value = address;
+                document.getElementById('updateStatus').value = status;
+            }
+            </script>
 
 </body>
 </html>

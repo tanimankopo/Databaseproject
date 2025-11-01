@@ -27,7 +27,7 @@ $productCount = $conn->query("SELECT COUNT(*) as count FROM products")->fetch_as
         <!-- Sidebar (matches existing design) -->
     
     <?php
-        include ('sidebar-admin.php');
+        include ('admin-sidebar.php');
     ?>
 
     <!-- Main Content -->
