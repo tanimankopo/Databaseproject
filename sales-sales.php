@@ -33,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['add_client_sale'])) {
     $stmt->execute();
     $stmt->close();
 
-    header("Location: sales.php");
+    header("Location: sales-sales.php");
     exit();
 }
 
@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_sale'])) {
     $stmt->execute();
     $stmt->close();
 
-    header("Location: sales.php");
+    header("Location: sales-sales.php");
     exit();
 }
 
@@ -81,7 +81,7 @@ $salesResult = $conn->query("SELECT * FROM sales ORDER BY saleID ASC");
 </head>
 <body>
 
-<?php include("sidebar-sales.php") ?>
+<?php include("sales-sidebar.php") ?>
 
 <div class="main-content">
     <header class="topbar">

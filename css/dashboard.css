@@ -39,6 +39,7 @@ body {
     overflow-y: auto;
     min-height: 100vh;
     background: white;
+     margin-left: 240px; /* Same as sidebar width */
 }
 
 .topbar {

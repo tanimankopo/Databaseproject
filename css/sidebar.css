@@ -128,13 +128,12 @@ body {
     padding: var(--spacing-md);
     text-align: center;
     border-top: 1px solid #444;
-    margin-top: auto;
 }
 
 .sidebar-footer button {
     width: 100%;
     padding: var(--spacing-sm);
-    background: #ff4757;
+    background: var(--sidebar-hover);
     color: white;
     border: none;
     border-radius: var(--border-radius);
@@ -144,8 +143,9 @@ body {
 }
 
 .sidebar-footer button:hover {
-    background: #e84118;
+    background: #747d8c;
 }
+
 
 /* ===========================
    Mobile Sidebar
@@ -158,3 +158,5 @@ body {
         transform: translateX(0);
     }
 }
+
+

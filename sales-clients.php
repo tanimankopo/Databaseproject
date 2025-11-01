@@ -22,7 +22,7 @@ $result = $conn->query("SELECT * FROM clientinfo ORDER BY clientID ASC");
 </head>
 <body>
 
-<?php include("sidebar-sales.php"); ?>
+<?php include("sales-sidebar.php"); ?>
 
 <div class="main-content">
     <header class="topbar">

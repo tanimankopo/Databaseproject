@@ -216,7 +216,7 @@ button.delete { background-color: #555; color: white; }
 <body>
 
 <h1>📝 Sales Approval</h1>
-<a href="dashboard-sales.php" style="display:inline-block;padding:8px 16px;background-color:#555;color:white;border-radius:4px;text-decoration:none;margin-bottom:15px;">⬅ Back</a>
+<a href="sales-dashboard.php" style="display:inline-block;padding:8px 16px;background-color:#555;color:white;border-radius:4px;text-decoration:none;margin-bottom:15px;">⬅ Back</a>
 
 <?php if ($res->num_rows > 0): ?>
 <table>

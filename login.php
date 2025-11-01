@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login'])) {
                 header("Location: sales-dashboard.php");  
             }
               elseif ($db_role === "Cashier")
-                header("location: -cashier-dashboard.php");
+                header("location: cashier-dashboard.php");
              else {
                 $error = "Unknown role assigned.";
             }

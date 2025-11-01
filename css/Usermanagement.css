@@ -1,8 +1,6 @@
 /* CSS Custom Properties (Variables) - Matches dashboard/product for theme/interactivity */
 :root {
     --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --sidebar-bg: #2f3542;
-    --sidebar-hover: #57606f;
     --tile-bg: #f8f9fa; /* Light gray (not white) for readability on cards */
     --tile-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Like dashboard tiles */
     --text-dark: #333333;
@@ -28,101 +26,19 @@
 
 body {
     font-family: var(--font-family);
-    background: #f8f9fa; /* Like dashboard */
+    background: #f8f9fa;
     color: var(--text-dark);
     line-height: 1.6;
     overflow-x: hidden;
-}
-
-/* Layout: Flexbox for sidebar + main (like dashboard/product) */
-body {
     display: flex;
     min-height: 100vh;
 }
 
-/* Sidebar (exact match to dashboard/product) */
-.sidebar {
-    width: 250px;
-    background: var(--sidebar-bg);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 1000;
-    transition: var(--transition);
-    padding: var(--spacing-lg) 0;
-}
-
-.sidebar .logo {
-    text-align: center;
-    margin-bottom: var(--spacing-lg);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: white;
-    padding: var(--spacing-sm) 0;
-}
-
-.sidebar .nav-links {
-    list-style: none;
-    flex: 1;
-}
-
-.sidebar .nav-links li {
-    margin: var(--spacing-sm) 0;
-}
-
-.sidebar .nav-links a {
-    color: #ddd;
-    text-decoration: none;
-    padding: var(--spacing-sm) var(--spacing-md);
-    display: block;
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-    font-size: 1rem;
-}
-
-.sidebar .nav-links a:hover,
-.sidebar .nav-links a.active {
-    background: var(--sidebar-hover);
-    color: white;
-    transform: translateX(5px); /* Slide interactivity like dashboard */
-}
-
-.sidebar-footer {
-    padding: var(--spacing-md);
-    text-align: center;
-    border-top: 1px solid #444;
-}
-
-.sidebar-footer form {
-    width: 100%;
-}
-
-.sidebar-footer button {
-    width: 100%;
-    padding: var(--spacing-sm);
-    background: var(--sidebar-hover);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    font-size: 1rem;
-    transition: var(--transition);
-}
-
-.sidebar-footer button:hover {
-    background: #747d8c;
-}
-
 /* Main Content (like dashboard: offset, padding, flex column gap) */
 .main-content {
-    margin-left: 250px;
     flex: 1;
     padding: var(--spacing-lg);
-    overflow-y: auto; /* Vertical only if needed */
+    overflow-y: auto;
     min-height: 100vh;
     background: white;
     display: flex;
@@ -149,19 +65,19 @@ body {
     gap: 0.5rem;
 }
 
-/* Form Sections (like product modals: light gray card, padding, radius, shadow) */
+/* Form Sections */
 .form-section {
-    background: var(--tile-bg); /* Light gray for readability (not white) */
+    background: var(--tile-bg);
     padding: var(--spacing-lg);
     border-radius: var(--border-radius);
     box-shadow: var(--tile-shadow);
     display: none;
-    border: 1px solid var(--border-color); /* Visible border */
-    transition: var(--transition); /* For subtle interactivity */
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
 }
 
 .form-section:hover {
-    transform: translateY(-2px); /* Subtle lift like dashboard tiles */
+    transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
@@ -189,7 +105,7 @@ body {
     font-weight: 500;
     color: var(--text-light);
     text-align: left;
-    font-size: 0.95rem; /* Like product */
+    font-size: 0.95rem;
 }
 
 .form-section input,
@@ -198,16 +114,16 @@ body {
     border: 2px solid var(--border-color);
     border-radius: 6px;
     font-size: 1rem;
-    transition: var(--transition); /* Like product */
-    background: white; /* White inside for contrast */
+    transition: var(--transition);
+    background: white;
     color: var(--text-dark);
 }
 
 .form-section input:focus,
 .form-section select:focus {
     outline: none;
-    border-color: var(--accent-blue); /* Blue ring like product/login */
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); /* Subtle glow */
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .form-section input[readonly] {
@@ -224,26 +140,26 @@ body {
     border-radius: var(--border-radius);
     cursor: pointer;
     font-weight: 600;
-    transition: var(--transition); /* Like product */
+    transition: var(--transition);
     margin-top: var(--spacing-sm);
 }
 
 .form-section button[type="submit"]:hover {
-    transform: translateY(-1px); /* Lift like dashboard/product */
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
 }
 
-/* User Management Container (flex gap like old, but with dashboard spacing) */
+/* User Management Container */
 .user-management-container {
     display: flex;
     gap: var(--spacing-md);
     width: 100%;
 }
 
-/* User Table Section (like product: light gray card, padding, interactivity) */
+/* User Table Section */
 .user-table-section {
     flex: 2;
-    background: var(--tile-bg); /* Light gray for readability */
+    background: var(--tile-bg);
     padding: var(--spacing-lg);
     border-radius: var(--border-radius);
     box-shadow: var(--tile-shadow);
@@ -252,7 +168,7 @@ body {
 }
 
 .user-table-section:hover {
-    transform: translateY(-2px); /* Subtle lift like dashboard */
+    transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
@@ -271,7 +187,7 @@ body {
     border-radius: 6px;
     font-size: 1rem;
     margin-bottom: var(--spacing-md);
-    transition: var(--transition); /* Like product */
+    transition: var(--transition);
     width: 200px;
     background: white;
     color: var(--text-dark);
@@ -287,34 +203,34 @@ body {
     margin-top: var(--spacing-sm);
 }
 
-/* User Table (like product: auto-fit, striped subtle, row hover blue) */
+/* User Table */
 .user-table {
     width: 100%;
     border-collapse: collapse;
-    background: var(--tile-bg); /* Light gray */
+    background: var(--tile-bg);
     border-radius: var(--border-radius);
     box-shadow: var(--tile-shadow);
-    overflow: hidden; /* Like product, but no scroll */
-    table-layout: auto; /* Auto-fit columns, no fixed/scroll */
+    overflow: hidden;
+    table-layout: auto;
     margin-top: var(--spacing-sm);
     border: 1px solid var(--border-color);
 }
 
 .user-table thead {
-    background: var(--sidebar-bg);
+    background: var(--accent-blue);
     color: white;
 }
 
 .user-table th,
 .user-table td {
     padding: var(--spacing-sm);
-    text-align: left; /* Like product for names/emails */
+    text-align: left;
     border-bottom: 1px solid var(--border-color);
     overflow: hidden;
-    text-overflow: ellipsis; /* Like product for long text */
-    white-space: nowrap; /* But wraps if needed on small screens */
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 0.95rem;
-    color: var(--text-dark); /* Dark text for readability */
+    color: var(--text-dark);
 }
 
 .user-table th {
@@ -322,15 +238,15 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: 0.85rem;
-    text-align: center; /* Like product */
+    text-align: center;
 }
 
 .user-table tbody tr:nth-child(even) {
-    background: #f0f0f0; /* Subtle stripe like product (light gray) */
+    background: #f0f0f0;
 }
 
 .user-table tbody tr:hover {
-    background: var(--accent-blue); /* Blue hover like product */
+    background: var(--accent-blue);
     color: white;
     transition: var(--transition);
 }
@@ -339,10 +255,10 @@ body {
     color: white;
 }
 
-/* Delete User Section (like product card: light gray, interactivity) */
+/* Delete User Section */
 .delete-user-section {
     flex: 1;
-    background: var(--tile-bg); /* Light gray for readability */
+    background: var(--tile-bg);
     padding: var(--spacing-lg);
     border-radius: var(--border-radius);
     box-shadow: var(--tile-shadow);
@@ -351,7 +267,7 @@ body {
 }
 
 .delete-user-section:hover {
-    transform: translateY(-2px); /* Lift like dashboard */
+    transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
@@ -382,7 +298,7 @@ body {
     border: 2px solid var(--border-color);
     border-radius: 6px;
     font-size: 1rem;
-    transition: var(--transition); /* Like product */
+    transition: var(--transition);
     background: white;
     color: var(--text-dark);
     width: 100%;
@@ -402,27 +318,18 @@ body {
     border-radius: var(--border-radius);
     cursor: pointer;
     font-weight: 600;
-    transition: var(--transition); /* Like product */
+    transition: var(--transition);
     margin-top: var(--spacing-sm);
 }
 
 .delete-user-section button[type="submit"]:hover {
-    transform: translateY(-1px); /* Lift like dashboard/product */
+    transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
-/* Mobile Responsiveness (like dashboard/product: stack, no scroll) */
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.active {
-        transform: translateX(0);
-    }
-
     .main-content {
-        margin-left: 0;
         padding: var(--spacing-md);
         gap: var(--spacing-sm);
     }
@@ -454,16 +361,8 @@ body {
         width: 100%;
     }
 
-    /* No scroll: Auto-fit works on mobile */
     .hamburger {
-        display: block;
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        cursor: pointer;
-        color: var(--text-dark);
-        padding: 0.5rem;
-        align-self: flex-start;
+        display: none;
     }
 }
 
@@ -471,7 +370,7 @@ body {
     .user-table th,
     .user-table td {
         font-size: 0.8rem;
-        white-space: normal; /* Allow wrap on very small screens */
+        white-space: normal;
     }
 
     .form-section h3,
@@ -481,14 +380,13 @@ body {
     }
 }
 
-/* Dark Mode (like dashboard/product: dark cards, visible borders, light text) */
+/* Dark Mode */
 @media (prefers-color-scheme: dark) {
     :root {
-        --tile-bg: #2d3748; /* Dark gray card (readable, not white) */
+        --tile-bg: #2d3748;
         --text-dark: #e2e8f0;
         --text-light: #a0aec0;
-        --border-color: #4a5568; /* Visible dark border */
-        --sidebar-bg: #1a202c;
+        --border-color: #4a5568;
     }
 
     body {
@@ -497,6 +395,7 @@ body {
 
     .main-content {
         background: #2d3748;
+        margin-left: 240px; /* Match your sidebar width (same as dashboard.css) */
     }
 
     .form-section,
@@ -508,12 +407,8 @@ body {
         border-color: var(--border-color);
     }
 
-    .user-table thead {
-        background: var(--sidebar-bg);
-    }
-
     .user-table tbody tr:nth-child(even) {
-        background: #4a5568; /* Subtle dark stripe */
+        background: #4a5568;
     }
 
     .user-table th,
@@ -540,5 +435,4 @@ body {
         background: #4a5568;
         border-color: var(--success-green);
     }
-
 }
