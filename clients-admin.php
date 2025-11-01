@@ -101,6 +101,7 @@ function openUpdateModal(id, name, number, email, address) {
     document.getElementById('updateName').value = name;
     document.getElementById('updateNumber').value = number;
     document.getElementById('updateEmail').value = email;
+    document.getElementById('updateAddress').value = address;
 }
 </script>
 
@@ -119,7 +120,7 @@ function openUpdateModal(id, name, number, email, address) {
                 <th>Client Name</th>
                 <th>Contact Number</th>
                 <th>Email</th>
-                
+                <th>Address</th>
                 <th>Registered Date</th>
                 <th>Actions</th>
             </tr>
@@ -130,6 +131,7 @@ function openUpdateModal(id, name, number, email, address) {
                 <td><?= htmlspecialchars($row['clientName']); ?></td>
                 <td><?= htmlspecialchars($row['contactNumber']); ?></td>
                 <td><?= htmlspecialchars($row['email']); ?></td>
+                <td><?= htmlspecialchars($row['address']); ?></td>
                 <td><?= htmlspecialchars($row['registeredDate']); ?></td>
                 <td>
                     <button class="update-btn"
@@ -138,7 +140,7 @@ function openUpdateModal(id, name, number, email, address) {
                             '<?= htmlspecialchars($row['clientName']); ?>',
                             '<?= htmlspecialchars($row['contactNumber']); ?>',
                             '<?= htmlspecialchars($row['email']); ?>',
-                            
+                            '<?= htmlspecialchars($row['address']); ?>'
                         )">Update</button>
 
                     <button class="delete-btn" onclick="confirmDelete(<?= $row['clientID']; ?>, event)">Delete</button>

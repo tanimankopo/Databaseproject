@@ -17,6 +17,42 @@ include "sidebar-cashier.php";
     <meta charset="UTF-8">
     <title>Paid Records - Cashier</title>
     <link rel="stylesheet" href="css/cashier.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1b0c0cff;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            color: white;
+        }
+        th {
+            background-color: #0c0303ff;
+        }
+        button.view {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        button.view:hover {
+            background-color: #1976D2;
+        }
+        form {
+            display: inline;
+        }
+        h2 {
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
@@ -28,7 +64,7 @@ include "sidebar-cashier.php";
         <!-- Paid Records -->
         <section>
             <h2>Paid Records</h2>
-            <table border="1" cellpadding="5" cellspacing="0">
+            <table>
                 <thead>
                     <tr>
                         <th>Transaction ID</th>
@@ -36,23 +72,39 @@ include "sidebar-cashier.php";
                         <th>Total</th>
                         <th>Payment Type</th>
                         <th>Date</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $records = $conn->query("SELECT * FROM payments ORDER BY dateCreated DESC");
+                    // ✅ Fetch all approved sales
+                    $records = $conn->query("SELECT * FROM sales WHERE status='approved' ORDER BY saleDate DESC");
+
                     if ($records && $records->num_rows > 0) {
-                        while($r = $records->fetch_assoc()) {
+                        while ($r = $records->fetch_assoc()) {
                             echo "<tr>";
-                            echo "<td>" . $r['paymentID'] . "</td>";
+                            echo "<td>" . $r['saleID'] . "</td>";
                             echo "<td>" . htmlspecialchars($r['customerName']) . "</td>";
                             echo "<td>₱" . number_format($r['totalAmount'], 2) . "</td>";
-                            echo "<td>" . ucfirst($r['paymentType']) . "</td>";
-                            echo "<td>" . $r['dateCreated'] . "</td>";
+
+                            // ✅ Payment Type is always Cash
+                            echo "<td>Cash</td>";
+
+                            // ✅ Show sale date
+                            echo "<td>" . $r['saleDate'] . "</td>";
+
+                            // ✅ View Receipt Button
+                            echo "<td>
+                                    <form method='GET' action='generate-receipt.php' target='_blank'>
+                                        <input type='hidden' name='saleID' value='" . $r['saleID'] . "'>
+                                        <button type='submit' class='view'>📄 View Receipt</button>
+                                    </form>
+                                  </td>";
+
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='5'>No paid records found.</td></tr>";
+                        echo "<tr><td colspan='6'>No paid records found.</td></tr>";
                     }
                     ?>
                 </tbody>
